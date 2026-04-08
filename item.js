@@ -1,0 +1,218 @@
+const BASE_URL = "https://hacker-news.firebaseio.com/v0";
+const COMMENTS_PER_PAGE = 5;
+
+const storyDetail = document.getElementById("story-detail");
+const commentsContainer = document.getElementById("comments-container");
+const commentCountLabel = document.getElementById("comment-count");
+
+let allCommentIds = [];
+let currentCommentIndex = 0;
+let loadMoreBtn = null;
+
+async function fetchItem(id) {
+  const response = await fetch(`${BASE_URL}/item/${id}.json`);
+  return await response.json();
+}
+
+function timeAgo(timestamp) {
+  const seconds = Math.floor((new Date() - timestamp * 1000) / 1000);
+  let interval = seconds / 31536000;
+  if (interval > 1) return Math.floor(interval) + " Y";
+  interval = seconds / 2592000;
+  if (interval > 1) return Math.floor(interval) + " M";
+  interval = seconds / 86400;
+  if (interval > 1) return Math.floor(interval) + " D";
+  interval = seconds / 3600;
+  if (interval > 1) return Math.floor(interval) + " H";
+  interval = seconds / 60;
+  if (interval > 1) return Math.floor(interval) + " M";
+  return Math.floor(seconds) + " S";
+}
+
+function getDomain(url) {
+  if (!url) return "";
+  try {
+    const domain = new URL(url).hostname;
+    return `(${domain})`;
+  } catch (e) {
+    return "";
+  }
+}
+
+function renderStory(story) {
+  storyDetail.innerHTML = `
+    <h1 class="text-3xl font-headline font-bold tracking-tight mb-2">
+      <a href="${story.url || "#"}" target="_blank" class="hover:text-primary transition-colors">${story.title}</a>
+      ${story.url ? `<span class="text-xs text-secondary font-normal ml-2">${getDomain(story.url)}</span>` : ""}
+    </h1>
+    <div class="flex flex-wrap items-center gap-x-4 gap-y-1 text-[0.7rem] text-secondary font-label font-semibold uppercase tracking-wider">
+        <span class="flex items-center gap-1 text-[#2B9720]">${story.score || 0} points</span>
+        <span class="flex items-center gap-1">
+            <span class="material-symbols-outlined text-[14px]">person</span>
+            <a class="hover:text-on-surface dark:hover:text-white transition-colors underline decoration-outline-variant/30 underline-offset-2"
+               href="user.html?id=${story.by}">${story.by}</a>
+        </span>
+        <span class="flex items-center gap-1">
+            <span class="material-symbols-outlined text-[14px]">schedule</span>
+            ${timeAgo(story.time)}
+        </span>
+    </div>
+    ${story.text ? `<div class="mt-6 text-sm text-on-surface dark:text-inverse-on-surface prose dark:prose-invert max-w-none">${story.text}</div>` : ""}
+  `;
+
+  commentCountLabel.textContent = `${story.descendants || 0} Comments`;
+}
+
+async function renderComment(commentId, depth = 0) {
+  const comment = await fetchItem(commentId);
+  if (!comment || comment.deleted || comment.dead) return null;
+
+  const commentEl = document.createElement("div");
+  commentEl.className = `comment-item ${depth > 0 ? "ml-4 md:ml-8 border-l border-outline-variant/10 pl-4 md:pl-6" : ""}`;
+
+  commentEl.innerHTML = `
+    <div class="py-3">
+        <div class="flex items-center gap-2 text-[0.65rem] text-secondary font-semibold uppercase tracking-wider mb-2">
+            <a href="user.html?id=${comment.by}"
+               class="text-primary hover:underline transition-colors">${comment.by}</a>
+            <span>•</span>
+            <span>${timeAgo(comment.time)}</span>
+        </div>
+        <div class="comment-content text-[13px] leading-relaxed text-on-surface dark:text-inverse-on-surface prose-sm dark:prose-invert max-w-none">
+            ${comment.text || ""}
+        </div>
+    </div>
+    <div id="kids-${commentId}" class="space-y-2"></div>
+  `;
+
+  if (comment.kids && comment.kids.length > 0) {
+    const kidsContainer = commentEl.querySelector(`#kids-${commentId}`);
+    for (const kidId of comment.kids) {
+      const kidEl = await renderComment(kidId, depth + 1);
+      if (kidEl) kidsContainer.appendChild(kidEl);
+    }
+  }
+
+  return commentEl;
+}
+
+async function loadNextComments() {
+  if (loadMoreBtn) loadMoreBtn.disabled = true;
+  if (loadMoreBtn) loadMoreBtn.textContent = "Loading...";
+
+  const nextBatch = allCommentIds.slice(
+    currentCommentIndex,
+    currentCommentIndex + COMMENTS_PER_PAGE,
+  );
+  const isFirstBatch = currentCommentIndex === 0;
+
+  for (const commentId of nextBatch) {
+    const commentEl = await renderComment(commentId);
+
+    // Remove skeleton loader as soon as we have the first actual comment element
+    if (isFirstBatch) {
+      const loader = document.getElementById("comments-loader");
+      if (loader) loader.remove();
+    }
+
+    if (commentEl) {
+      if (loadMoreBtn) {
+        commentsContainer.insertBefore(commentEl, loadMoreBtn.parentElement);
+      } else {
+        commentsContainer.appendChild(commentEl);
+      }
+    }
+  }
+
+  currentCommentIndex += COMMENTS_PER_PAGE;
+  updateLoadMoreButton();
+}
+
+function updateLoadMoreButton() {
+  if (currentCommentIndex >= allCommentIds.length) {
+    if (loadMoreBtn) loadMoreBtn.parentElement.remove();
+    loadMoreBtn = null;
+    return;
+  }
+
+  if (!loadMoreBtn) {
+    const btnContainer = document.createElement("div");
+    btnContainer.className = "mt-8 text-center pb-12";
+    btnContainer.innerHTML = `
+      <button id="load-more-comments" class="px-6 py-2.5 bg-surface-container-high dark:bg-on-background/20 rounded-lg font-headline font-bold uppercase tracking-widest text-[10px] text-primary hover:bg-primary-container hover:text-on-primary transition-all duration-300">
+        Show More Comments
+      </button>
+    `;
+    commentsContainer.appendChild(btnContainer);
+    loadMoreBtn = document.getElementById("load-more-comments");
+    loadMoreBtn.addEventListener("click", loadNextComments);
+  } else {
+    loadMoreBtn.disabled = false;
+    loadMoreBtn.textContent = "Show More Comments";
+  }
+}
+
+async function init() {
+  const themeToggle = document.getElementById("theme-toggle");
+  if (themeToggle) {
+    themeToggle.addEventListener("click", () => {
+      const html = document.documentElement;
+      const isDark = html.classList.toggle("dark");
+      themeToggle.textContent = isDark ? "dark_mode" : "light_mode";
+      localStorage.setItem("theme", isDark ? "dark" : "light");
+    });
+
+    const savedTheme = localStorage.getItem("theme");
+    if (savedTheme === "light") {
+      document.documentElement.classList.remove("dark");
+      themeToggle.textContent = "light_mode";
+    }
+  }
+
+  const urlParams = new URLSearchParams(window.location.search);
+  const itemId = urlParams.get("id");
+
+  if (!itemId) {
+    window.location.href = "index.html";
+    return;
+  }
+
+  const story = await fetchItem(itemId);
+  if (!story) {
+    const loader = document.getElementById("comments-loader");
+    if (loader) loader.remove();
+    commentsContainer.innerHTML =
+      '<div class="text-secondary text-xs italic">Story not found.</div>';
+    return;
+  }
+
+  renderStory(story);
+  allCommentIds = story.kids || [];
+
+  if (allCommentIds.length > 0) {
+    await loadNextComments();
+  } else {
+    const loader = document.getElementById("comments-loader");
+    if (loader) loader.remove();
+    commentsContainer.innerHTML =
+      '<div class="text-secondary text-xs italic">No comments yet.</div>';
+  }
+}
+
+function updateFooter() {
+  const vibes = [
+    'Vibe-coded with AI by <a href="https://shajanjacob.com" target="_blank" class="hover:text-primary transition-colors underline decoration-outline-variant/30">Shajan</a>',
+    'AI-assisted, human-approved - <a href="https://shajanjacob.com" target="_blank" class="hover:text-primary transition-colors underline decoration-outline-variant/30">Shajan</a>',
+    'Co-built with AI by <a href="https://shajanjacob.com" target="_blank" class="hover:text-primary transition-colors underline decoration-outline-variant/30">Shajan</a>',
+    'Prompt → Enter → Pray - <a href="https://shajanjacob.com" target="_blank" class="hover:text-primary transition-colors underline decoration-outline-variant/30">Shajan</a>',
+    '95% AI, 5% debugging - <a href="https://shajanjacob.com" target="_blank" class="hover:text-primary transition-colors underline decoration-outline-variant/30">Shajan</a>',
+    'Co-authored with AI by <a href="https://shajanjacob.com" target="_blank" class="hover:text-primary transition-colors underline decoration-outline-variant/30">Shajan</a>',
+  ];
+  const footer = document.getElementById("footer-vibe");
+  if (footer) {
+    footer.innerHTML = vibes[Math.floor(Math.random() * vibes.length)];
+  }
+}
+
+init();
+updateFooter();

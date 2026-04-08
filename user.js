@@ -1,0 +1,209 @@
+const BASE_URL = "https://hacker-news.firebaseio.com/v0";
+const ITEMS_PER_PAGE = 20;
+
+const userHeader = document.getElementById("user-header");
+const submissionsContainer = document.getElementById("submissions-container");
+const loadMoreBtn = document.getElementById("load-more-submissions");
+
+let allSubmittedIds = [];
+let currentItemIndex = 0;
+
+async function fetchUser(id) {
+  const response = await fetch(`${BASE_URL}/user/${id}.json`);
+  return await response.json();
+}
+
+async function fetchItem(id) {
+  const response = await fetch(`${BASE_URL}/item/${id}.json`);
+  return await response.json();
+}
+
+function timeAgo(timestamp) {
+  const seconds = Math.floor((new Date() - timestamp * 1000) / 1000);
+  let interval = seconds / 31536000;
+  if (interval > 1) return Math.floor(interval) + " Y";
+  interval = seconds / 2592000;
+  if (interval > 1) return Math.floor(interval) + " M";
+  interval = seconds / 86400;
+  if (interval > 1) return Math.floor(interval) + " D";
+  interval = seconds / 3600;
+  if (interval > 1) return Math.floor(interval) + " H";
+  interval = seconds / 60;
+  if (interval > 1) return Math.floor(interval) + " M";
+  return Math.floor(seconds) + " S";
+}
+
+function formatDate(timestamp) {
+  return new Date(timestamp * 1000).toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
+}
+
+function renderUserHeader(user) {
+  userHeader.innerHTML = `
+    <h1 class="text-4xl font-headline font-bold tracking-tight mb-4 text-primary">${user.id}</h1>
+    <div class="flex flex-wrap gap-6 text-xs font-label font-semibold uppercase tracking-wider text-secondary mb-6">
+      <span class="flex items-center gap-1.5">
+        <span class="material-symbols-outlined text-base">calendar_today</span>
+        Joined ${formatDate(user.created)}
+      </span>
+      <span class="flex items-center gap-1.5">
+        <span class="material-symbols-outlined text-base">stars</span>
+        ${user.karma.toLocaleString()} Karma
+      </span>
+    </div>
+    ${
+      user.about
+        ? `
+      <div class="prose dark:prose-invert max-w-none text-sm leading-relaxed text-on-surface/80 dark:text-inverse-on-surface/80 bg-surface-container-low dark:bg-on-background/10 p-6 rounded-xl border border-outline-variant/10">
+        ${user.about}
+      </div>
+    `
+        : ""
+    }
+  `;
+}
+
+function createSubmissionElement(item) {
+  const el = document.createElement("div");
+  el.className =
+    "py-4 px-2 hover:bg-surface-container-low dark:hover:bg-surface-container-highest/5 rounded-lg transition-colors";
+
+  if (item.type === "story" || item.type === "poll") {
+    el.innerHTML = `
+      <div class="flex flex-wrap items-baseline gap-2 mb-1">
+        <span class="text-[10px] font-bold uppercase tracking-widest text-primary/60 border border-primary/20 px-1.5 rounded">${item.type}</span>
+        <a href="${item.url || `item.html?id=${item.id}`}" class="text-[15px] font-medium hover:text-primary transition-colors">${item.title}</a>
+      </div>
+      <div class="flex gap-x-4 text-[10px] text-secondary font-semibold uppercase tracking-wider">
+      <span class="flex items-center gap-1">
+      <span class="material-symbols-outlined text-[12px]">change_history</span>
+      <span>${item.score || 0}</span>
+      </span>
+        <span>${timeAgo(item.time)}</span>
+        <a href="item.html?id=${item.id}" class="hover:text-primary transition-colors">${item.descendants || 0} comments</a>
+      </div>
+    `;
+  } else if (item.type === "comment") {
+    el.innerHTML = `
+      <div class="flex flex-wrap items-baseline gap-2 mb-2">
+        <span class="text-[10px] font-bold uppercase tracking-widest text-secondary/60 border border-outline-variant/30 px-1.5 rounded">comment</span>
+        <span class="text-[10px] text-secondary font-semibold uppercase tracking-wider">${timeAgo(item.time)} on </span>
+        <a href="item.html?id=${item.parent}" class="text-[11px] font-medium hover:text-primary transition-colors underline decoration-outline-variant/30">parent item</a>
+      </div>
+      <div class="text-[13px] leading-relaxed text-on-surface/70 dark:text-inverse-on-surface/70 line-clamp-3">
+        ${item.text || ""}
+      </div>
+    `;
+  }
+
+  return el;
+}
+
+async function loadNextSubmissions() {
+  if (loadMoreBtn) {
+    loadMoreBtn.disabled = true;
+    loadMoreBtn.textContent = "Loading...";
+  }
+
+  const nextBatchIds = allSubmittedIds.slice(
+    currentItemIndex,
+    currentItemIndex + ITEMS_PER_PAGE,
+  );
+  const itemPromises = nextBatchIds.map((id) => fetchItem(id));
+  const items = await Promise.all(itemPromises);
+
+  // Remove loader on first batch
+  if (currentItemIndex === 0) {
+    const loader = document.getElementById("submissions-loader");
+    if (loader) loader.remove();
+  }
+
+  items.forEach((item) => {
+    if (item && !item.deleted && !item.dead) {
+      submissionsContainer.appendChild(createSubmissionElement(item));
+    }
+  });
+
+  currentItemIndex += ITEMS_PER_PAGE;
+  updateLoadMoreButton();
+}
+
+function updateLoadMoreButton() {
+  if (currentItemIndex >= allSubmittedIds.length) {
+    loadMoreBtn.classList.add("hidden");
+  } else {
+    loadMoreBtn.classList.remove("hidden");
+    loadMoreBtn.disabled = false;
+    loadMoreBtn.textContent = "Show More";
+  }
+}
+
+async function init() {
+  // Theme toggle
+  const themeToggle = document.getElementById("theme-toggle");
+  if (themeToggle) {
+    themeToggle.addEventListener("click", () => {
+      const html = document.documentElement;
+      const isDark = html.classList.toggle("dark");
+      themeToggle.textContent = isDark ? "dark_mode" : "light_mode";
+      localStorage.setItem("theme", isDark ? "dark" : "light");
+    });
+
+    const savedTheme = localStorage.getItem("theme");
+    if (savedTheme === "light") {
+      document.documentElement.classList.remove("dark");
+      themeToggle.textContent = "light_mode";
+    }
+  }
+
+  const urlParams = new URLSearchParams(window.location.search);
+  const userId = urlParams.get("id");
+
+  if (!userId) {
+    window.location.href = "index.html";
+    return;
+  }
+
+  const user = await fetchUser(userId);
+  if (!user) {
+    userHeader.innerHTML =
+      '<div class="text-secondary italic">User not found.</div>';
+    const loader = document.getElementById("submissions-loader");
+    if (loader) loader.remove();
+    return;
+  }
+
+  renderUserHeader(user);
+  allSubmittedIds = user.submitted || [];
+
+  if (allSubmittedIds.length > 0) {
+    loadNextSubmissions();
+  } else {
+    const loader = document.getElementById("submissions-loader");
+    if (loader) loader.remove();
+    submissionsContainer.innerHTML =
+      '<div class="text-secondary text-sm italic py-8 text-center">No submissions yet.</div>';
+  }
+}
+
+function updateFooter() {
+  const vibes = [
+    'Vibe-coded with AI by <a href="https://shajanjacob.com" target="_blank" class="hover:text-primary transition-colors underline decoration-outline-variant/30">Shajan</a>',
+    'AI-assisted, human-approved - <a href="https://shajanjacob.com" target="_blank" class="hover:text-primary transition-colors underline decoration-outline-variant/30">Shajan</a>',
+    'Co-built with AI by <a href="https://shajanjacob.com" target="_blank" class="hover:text-primary transition-colors underline decoration-outline-variant/30">Shajan</a>',
+    'Prompt → Enter → Pray - <a href="https://shajanjacob.com" target="_blank" class="hover:text-primary transition-colors underline decoration-outline-variant/30">Shajan</a>',
+    '95% AI, 5% debugging - <a href="https://shajanjacob.com" target="_blank" class="hover:text-primary transition-colors underline decoration-outline-variant/30">Shajan</a>',
+    'Co-authored with AI by <a href="https://shajanjacob.com" target="_blank" class="hover:text-primary transition-colors underline decoration-outline-variant/30">Shajan</a>',
+  ];
+  const footer = document.getElementById("footer-vibe");
+  if (footer) {
+    footer.innerHTML = vibes[Math.floor(Math.random() * vibes.length)];
+  }
+}
+
+loadMoreBtn.addEventListener("click", loadNextSubmissions);
+init();
+updateFooter();

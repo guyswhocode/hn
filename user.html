@@ -2,7 +2,7 @@
     <head>
         <meta charset="utf-8" />
         <meta content="width=device-width, initial-scale=1.0" name="viewport" />
-        <title>HN</title>
+        <title>User Profile - HN Client</title>
         <link
             href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&amp;family=Inter:wght@300;400;500;600;700&amp;display=swap"
             rel="stylesheet"
@@ -137,37 +137,60 @@
                 </div>
             </div>
         </nav>
-        <!-- Main Content Canvas -->
+
         <main class="pt-16 pb-4 px-6 max-w-4xl mx-auto min-h-screen">
-            <!-- Feed Items -->
-            <div id="feed-container" class="divide-y divide-outline-variant/10">
-                <!-- Skeleton Loader -->
-                <div id="feed-loader" class="space-y-4 pt-4">
-                    <div class="animate-pulse flex items-start px-2 py-4">
-                        <div
-                            class="w-8 h-8 bg-surface-container-highest/50 rounded mr-4"
-                        ></div>
-                        <div class="flex-1 space-y-3">
-                            <div
-                                class="h-4 bg-surface-container-highest/50 rounded w-3/4"
-                            ></div>
-                            <div
-                                class="h-3 bg-surface-container-highest/30 rounded w-1/2"
-                            ></div>
-                        </div>
-                    </div>
+            <!-- User Header -->
+            <div id="user-header" class="mb-12">
+                <div class="animate-pulse">
+                    <div
+                        class="h-10 bg-surface-container-highest/50 rounded-lg w-1/2 mb-4"
+                    ></div>
+                    <div
+                        class="h-4 bg-surface-container-highest/30 rounded w-1/4 mb-2"
+                    ></div>
+                    <div
+                        class="h-4 bg-surface-container-highest/30 rounded w-1/3"
+                    ></div>
                 </div>
             </div>
-            <!-- Load More Section -->
-            <div class="mt-8 text-center">
-                <button
-                    id="load-more-btn"
-                    class="hidden px-6 py-2.5 bg-surface-container-high dark:bg-on-background/20 rounded-lg font-headline font-bold uppercase tracking-widest text-[10px] text-primary hover:bg-primary-container hover:text-on-primary transition-all duration-300"
+
+            <!-- User Submissions -->
+            <div>
+                <h2
+                    class="text-sm font-headline font-bold uppercase tracking-widest text-secondary mb-6 border-b border-outline-variant/10 pb-2"
                 >
-                    Load More
-                </button>
+                    Submissions
+                </h2>
+                <div
+                    id="submissions-container"
+                    class="divide-y divide-outline-variant/10"
+                >
+                    <div
+                        id="submissions-loader"
+                        class="space-y-4 pt-4 animate-pulse"
+                    >
+                        <div
+                            class="h-16 bg-surface-container-highest/20 rounded-lg w-full"
+                        ></div>
+                        <div
+                            class="h-16 bg-surface-container-highest/20 rounded-lg w-full"
+                        ></div>
+                        <div
+                            class="h-16 bg-surface-container-highest/20 rounded-lg w-full"
+                        ></div>
+                    </div>
+                </div>
+                <div class="mt-8 text-center">
+                    <button
+                        id="load-more-submissions"
+                        class="hidden px-6 py-2.5 bg-surface-container-high dark:bg-on-background/20 rounded-lg font-headline font-bold uppercase tracking-widest text-[10px] text-primary hover:bg-primary-container hover:text-on-primary transition-all duration-300"
+                    >
+                        Show More
+                    </button>
+                </div>
             </div>
         </main>
+
         <!-- Footer -->
         <footer
             class="w-full py-4 mt-4 border-t border-outline-variant/5 text-center"
@@ -176,9 +199,9 @@
                 id="footer-vibe"
                 class="font-inter text-[10px] text-slate-500 dark:text-slate-400 tracking-wider"
             >
-                <!-- Randomly set by script.js -->
+                <!-- Randomly set by user.js -->
             </div>
         </footer>
-        <script src="script.js"></script>
+        <script src="user.js"></script>
     </body>
 </html>
