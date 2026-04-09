@@ -78,7 +78,7 @@
             el.innerHTML = `
     <div class="flex flex-wrap items-baseline gap-2 mb-1">
         <span class="text-[10px] font-bold uppercase tracking-widest text-primary/60 border border-primary/20 px-1.5 rounded">${item.type}</span>
-        <a href="${item.url || `item/index.html?id=${item.id}`}" class="text-[15px] font-medium hover:text-primary transition-colors">${item.title}</a>
+        <a href="${item.url || `../item/index.html?id=${item.id}`}" class="text-[15px] font-medium hover:text-primary transition-colors">${item.title}</a>
     </div>
     <div class="flex gap-x-4 text-[10px] text-secondary font-semibold uppercase tracking-wider">
     <span class="flex items-center gap-1">
@@ -86,7 +86,7 @@
     <span>${item.score || 0}</span>
     </span>
         <span>${timeAgo(item.time)}</span>
-        <a href="item/index.html?id=${item.id}" class="hover:text-primary transition-colors">${item.descendants || 0} comments</a>
+        <a href="../item/index.html?id=${item.id}" class="hover:text-primary transition-colors">${item.descendants || 0} comments</a>
     </div>
     `;
         } else if (item.type === "comment") {
@@ -94,7 +94,7 @@
     <div class="flex flex-wrap items-baseline gap-2 mb-2">
         <span class="text-[10px] font-bold uppercase tracking-widest text-secondary/60 border border-outline-variant/30 px-1.5 rounded">comment</span>
         <span class="text-[10px] text-secondary font-semibold uppercase tracking-wider">${timeAgo(item.time)} on </span>
-        <a href="item/index.html?id=${item.parent}" class="text-[11px] font-medium hover:text-primary transition-colors underline decoration-outline-variant/30">parent item</a>
+        <a href="../item/index.html?id=${item.parent}" class="text-[11px] font-medium hover:text-primary transition-colors underline decoration-outline-variant/30">parent item</a>
     </div>
     <div class="text-[13px] leading-relaxed text-on-surface/70 dark:text-inverse-on-surface/70 line-clamp-3">
         ${item.text || ""}

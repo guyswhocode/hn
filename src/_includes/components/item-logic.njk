@@ -51,7 +51,7 @@
         <span class="flex items-center gap-1">
             <span class="material-symbols-outlined text-[14px]">person</span>
             <a class="hover:text-on-surface dark:hover:text-white transition-colors underline decoration-outline-variant/30 underline-offset-2"
-               href="user/index.html?id=${story.by}">${story.by}</a>
+               href="../user/index.html?id=${story.by}">${story.by}</a>
         </span>
         <span class="flex items-center gap-1">
             <span class="material-symbols-outlined text-[14px]">schedule</span>
@@ -77,7 +77,7 @@
             <button class="collapse-toggle flex items-center justify-center w-4 h-4 rounded bg-surface-container-high dark:bg-white/10 text-primary hover:bg-primary-container hover:text-on-primary transition-colors">
                 <span class="material-symbols-outlined text-[12px]">remove</span>
             </button>
-            <a href="user/index.html?id=${comment.by}"
+            <a href="../user/index.html?id=${comment.by}"
                class="text-primary hover:underline transition-colors">${comment.by}</a>
             <span>•</span>
             <span>${timeAgo(comment.time)}</span>
