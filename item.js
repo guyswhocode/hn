@@ -72,7 +72,7 @@ async function renderComment(commentId, depth = 0) {
 
   commentEl.innerHTML = `
     <div class="py-3">
-        <div class="flex items-center gap-2 text-[0.65rem] text-secondary font-semibold uppercase tracking-wider mb-2">
+        <div class="flex items-center gap-2 text-[0.65rem] text-secondary font-semibold tracking-wider mb-2">
             <a href="user.html?id=${comment.by}"
                class="text-primary hover:underline transition-colors">${comment.by}</a>
             <span>•</span>

@@ -74,7 +74,7 @@ function createStoryElement(story, index) {
             </a>
             <span class="text-[10px] text-secondary/60 dark:text-slate-500 font-label tracking-wide">${getDomain(story.url)}</span>
         </div>
-        <div class="flex flex-wrap items-center gap-x-4 gap-y-1 text-[0.65rem] text-secondary font-label font-semibold uppercase tracking-wider">
+        <div class="flex flex-wrap items-center gap-x-4 gap-y-1 text-[0.65rem] text-secondary font-label font-semibold tracking-wider">
             <span class="flex items-center gap-1">
             <span class="material-symbols-outlined text-[12px]">change_history</span>
             ${story.score || 0}</span>
@@ -99,77 +99,69 @@ function createStoryElement(story, index) {
 }
 
 async function loadStories(append = false) {
-  try {
-    if (!append) {
-      let placeholderItem = `<div class="animate-pulse flex items-start px-2 py-4 border-t border-outline-variant/10">
-          <div class="w-8 h-8 bg-surface-container-highest/50 rounded mr-4"></div>
-          <div class="flex-1 space-y-3">
-              <div class="h-4 bg-surface-container-highest/50 rounded w-4/5"></div>
-              <div class="h-3 bg-surface-container-highest/30 rounded w-1/4"></div>
-          </div>
-      </div>`;
-      feedContainer.innerHTML = `
-        <div id="feed-loader" class="space-y-4 pt-4">
-            ${placeholderItem.repeat(10)}
+  if (!append) {
+    let placeholderItem = `<div class="animate-pulse flex items-start px-2 py-4 border-t border-outline-variant/10">
+        <div class="w-8 h-8 bg-surface-container-highest/50 rounded mr-4"></div>
+        <div class="flex-1 space-y-3">
+            <div class="h-4 bg-surface-container-highest/50 rounded w-4/5"></div>
+            <div class="h-3 bg-surface-container-highest/30 rounded w-1/4"></div>
         </div>
-      `;
-      currentPage = 0;
-      currentStoryIds = await fetchStoryIds(currentType);
-    } else {
-      // Show loading state on button
-      loadMoreBtn.disabled = true;
-      loadMoreBtn.innerHTML = `
-        <span class="flex items-center gap-2">
-          <span class="material-symbols-outlined animate-spin text-[14px]">progress_activity</span>
-          Loading
-        </span>
-      `;
-    }
+    </div>`;
+    feedContainer.innerHTML = `
+      <div id="feed-loader" class="space-y-4 pt-4">
+          ${placeholderItem.repeat(10)}
+      </div>
+    `;
+    currentPage = 0;
+    currentStoryIds = await fetchStoryIds(currentType);
+  } else {
+    // Show loading state on button
+    loadMoreBtn.disabled = true;
+    loadMoreBtn.innerHTML = `
+      <span class="flex items-center gap-2">
+        <span class="material-symbols-outlined animate-spin text-[14px] uppercase">progress_activity</span>
+        Loading
+      </span>
+    `;
+  }
 
-    const start = currentPage * ITEMS_PER_PAGE;
-    const end = start + ITEMS_PER_PAGE;
-    const pageIds = currentStoryIds.slice(start, end);
+  const start = currentPage * ITEMS_PER_PAGE;
+  const end = start + ITEMS_PER_PAGE;
+  const pageIds = currentStoryIds.slice(start, end);
 
-    if (pageIds.length === 0) {
-      if (!append)
-        feedContainer.innerHTML =
-          '<div class="py-8 text-center text-secondary">No stories found.</div>';
-      loadMoreBtn.classList.add("hidden");
-      return;
-    }
-
-    const storyPromises = pageIds.map((id) => fetchItem(id));
-    const stories = await Promise.all(storyPromises);
-
-    // Remove loader BEFORE appending content
-    const loader = document.getElementById("feed-loader");
-    if (loader && !append) feedContainer.innerHTML = "";
-
-    stories.forEach((story, index) => {
-      if (story) {
-        feedContainer.appendChild(createStoryElement(story, index));
-      }
-    });
-
-    currentPage++;
-  } catch (error) {
-    console.error("Error loading stories:", error);
-    if (!append) {
+  if (pageIds.length === 0) {
+    if (!append)
       feedContainer.innerHTML =
-        '<div class="py-8 text-center text-error">Failed to load stories. Please try again later.</div>';
-    }
-  } finally {
-    // Reset button state
-    if (append) {
-      loadMoreBtn.disabled = false;
-      loadMoreBtn.innerHTML = "Load More";
-    }
+        '<div class="py-8 text-center text-secondary">No stories found.</div>';
+    loadMoreBtn.classList.add("hidden");
+    return;
+  }
 
-    if (currentPage * ITEMS_PER_PAGE >= currentStoryIds.length) {
-      loadMoreBtn.classList.add("hidden");
-    } else {
-      loadMoreBtn.classList.remove("hidden");
+  const storyPromises = pageIds.map((id) => fetchItem(id));
+  const stories = await Promise.all(storyPromises);
+
+  // Remove loader BEFORE appending content
+  const loader = document.getElementById("feed-loader");
+  if (loader && !append) feedContainer.innerHTML = "";
+
+  stories.forEach((story, index) => {
+    if (story) {
+      feedContainer.appendChild(createStoryElement(story, index));
     }
+  });
+
+  currentPage++;
+
+  // Reset button state
+  if (append) {
+    loadMoreBtn.disabled = false;
+    loadMoreBtn.innerHTML = "Load More";
+  }
+
+  if (currentPage * ITEMS_PER_PAGE >= currentStoryIds.length) {
+    loadMoreBtn.classList.add("hidden");
+  } else {
+    loadMoreBtn.classList.remove("hidden");
   }
 }
 
