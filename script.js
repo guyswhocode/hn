@@ -98,8 +98,28 @@ function createStoryElement(story, index) {
   return article;
 }
 
+let selectedStoryIndex = -1;
+
+function updateActiveStory(index) {
+  const stories = feedContainer.querySelectorAll("article");
+  if (stories.length === 0) return;
+
+  // Remove existing highlight
+  stories.forEach((s) => s.classList.remove("active-story"));
+
+  // Ensure index is within bounds
+  selectedStoryIndex = Math.max(0, Math.min(index, stories.length - 1));
+
+  const activeStory = stories[selectedStoryIndex];
+  if (activeStory) {
+    activeStory.classList.add("active-story");
+    activeStory.scrollIntoView({ behavior: "smooth", block: "nearest" });
+  }
+}
+
 async function loadStories(append = false) {
   if (!append) {
+    selectedStoryIndex = -1;
     let placeholderItem = `<div class="animate-pulse flex items-start px-2 py-4 border-t border-outline-variant/10">
         <div class="w-8 h-8 bg-surface-container-highest/50 rounded mr-4"></div>
         <div class="flex-1 space-y-3">
@@ -165,66 +185,110 @@ async function loadStories(append = false) {
   }
 }
 
+// Keyboard Navigation Event Listener
+document.addEventListener("keydown", (e) => {
+  // Ignore if user is typing in an input
+  if (e.target.tagName === "INPUT" || e.target.tagName === "TEXTAREA") return;
+
+  const stories = feedContainer.querySelectorAll("article");
+  if (stories.length === 0) return;
+
+  switch (e.key.toLowerCase()) {
+    case "k":
+      updateActiveStory(selectedStoryIndex + 1);
+      break;
+    case "j":
+      updateActiveStory(selectedStoryIndex - 1);
+      break;
+
+    case "enter":
+    case "o":
+      if (selectedStoryIndex !== -1) {
+        const link = stories[selectedStoryIndex].querySelector("a");
+        if (link) {
+          if (e.shiftKey) {
+            window.open(link.href, "_blank");
+          } else {
+            link.click();
+          }
+        }
+      }
+      break;
+    case "c":
+      if (selectedStoryIndex !== -1) {
+        const commentsLink = stories[selectedStoryIndex].querySelector(
+          'a[href^="item.html"]',
+        );
+        if (commentsLink) commentsLink.click();
+      }
+      break;
+    case "u":
+      if (selectedStoryIndex !== -1) {
+        const userLink = stories[selectedStoryIndex].querySelector(
+          'a[href^="user.html"]',
+        );
+        if (userLink) userLink.click();
+      }
+      break;
+    case "?":
+      if (shortcutsModal) shortcutsModal.classList.toggle("hidden");
+      break;
+    case "escape":
+      if (shortcutsModal) shortcutsModal.classList.add("hidden");
+      break;
+  }
+});
+
 // Event Listeners
 if (loadMoreBtn) loadMoreBtn.addEventListener("click", () => loadStories(true));
 
-const themeToggle = document.getElementById("theme-toggle");
-if (themeToggle) {
-  themeToggle.addEventListener("click", () => {
-    const html = document.documentElement;
-    const isDark = html.classList.toggle("dark");
-    themeToggle.textContent = isDark ? "dark_mode" : "light_mode";
-    localStorage.setItem("theme", isDark ? "dark" : "light");
-  });
-
-  // Initialize theme
-  const savedTheme = localStorage.getItem("theme");
-  if (savedTheme === "light") {
-    document.documentElement.classList.remove("dark");
-    themeToggle.textContent = "light_mode";
-  }
-}
-
-navLinks.forEach((link) => {
-  link.addEventListener("click", (e) => {
-    if (
-      window.location.pathname.endsWith("index.html") ||
-      window.location.pathname.endsWith("/")
-    ) {
-      e.preventDefault();
-      const type = link.getAttribute("data-type");
-      if (type === currentType) return;
-
-      // Update URL without reloading
-      const newUrl = new URL(window.location.href);
-      newUrl.searchParams.set("type", type);
-      window.history.pushState({}, "", newUrl);
-
-      // Update UI
-      navLinks.forEach((l) => {
-        l.classList.remove(
-          "text-[#2B9720]",
-          "border-b-2",
-          "border-[#2B9720]",
-          "pb-0.5",
-        );
-        l.classList.add("text-slate-600", "dark:text-slate-400");
-      });
-      link.classList.add(
-        "text-[#2B9720]",
-        "border-b-2",
-        "border-[#2B9720]",
-        "pb-0.5",
-      );
-      link.classList.remove("text-slate-600", "dark:text-slate-400");
-
-      currentType = type;
-      loadStories();
-    }
-  });
-});
+// Global variables for elements
+let shortcutsModal, helpBtn, closeShortcuts;
 
 function init() {
+  // Initialize modal elements
+  shortcutsModal = document.getElementById("shortcuts-modal");
+  helpBtn = document.getElementById("help-btn");
+  closeShortcuts = document.getElementById("close-shortcuts");
+
+  if (helpBtn) {
+    helpBtn.addEventListener("click", () => {
+      shortcutsModal.classList.remove("hidden");
+    });
+  }
+
+  if (closeShortcuts) {
+    closeShortcuts.addEventListener("click", () => {
+      shortcutsModal.classList.add("hidden");
+    });
+  }
+
+  if (shortcutsModal) {
+    shortcutsModal.addEventListener("click", (e) => {
+      if (e.target === shortcutsModal) shortcutsModal.classList.add("hidden");
+    });
+  }
+
+  const themeToggle = document.getElementById("theme-toggle");
+  if (themeToggle) {
+    themeToggle.addEventListener("click", () => {
+      const html = document.documentElement;
+      const isDark = html.classList.toggle("dark");
+      themeToggle.textContent = isDark ? "dark_mode" : "light_mode";
+      localStorage.setItem("theme", isDark ? "dark" : "light");
+    });
+
+    // Initialize theme
+    const savedTheme = localStorage.getItem("theme");
+    if (savedTheme === "light") {
+      document.documentElement.classList.remove("dark");
+      themeToggle.textContent = "light_mode";
+    } else {
+      document.documentElement.classList.add("dark");
+      themeToggle.textContent = "dark_mode";
+    }
+  }
+
   const urlParams = new URLSearchParams(window.location.search);
   const typeParam = urlParams.get("type");
   if (typeParam && TYPE_MAP[typeParam]) {

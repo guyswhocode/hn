@@ -179,7 +179,33 @@ function updateLoadMoreButton() {
   }
 }
 
+// Global variables for elements
+let shortcutsModal, helpBtn, closeShortcuts;
+
 async function init() {
+  // Initialize modal elements
+  shortcutsModal = document.getElementById("shortcuts-modal");
+  helpBtn = document.getElementById("help-btn");
+  closeShortcuts = document.getElementById("close-shortcuts");
+
+  if (helpBtn) {
+    helpBtn.addEventListener("click", () => {
+      shortcutsModal.classList.remove("hidden");
+    });
+  }
+
+  if (closeShortcuts) {
+    closeShortcuts.addEventListener("click", () => {
+      shortcutsModal.classList.add("hidden");
+    });
+  }
+
+  if (shortcutsModal) {
+    shortcutsModal.addEventListener("click", (e) => {
+      if (e.target === shortcutsModal) shortcutsModal.classList.add("hidden");
+    });
+  }
+
   const themeToggle = document.getElementById("theme-toggle");
   if (themeToggle) {
     themeToggle.addEventListener("click", () => {
@@ -193,6 +219,9 @@ async function init() {
     if (savedTheme === "light") {
       document.documentElement.classList.remove("dark");
       themeToggle.textContent = "light_mode";
+    } else {
+      document.documentElement.classList.add("dark");
+      themeToggle.textContent = "dark_mode";
     }
   }
 
@@ -240,6 +269,20 @@ function updateFooter() {
     footer.innerHTML = vibes[Math.floor(Math.random() * vibes.length)];
   }
 }
+
+// Keyboard Navigation Event Listener
+document.addEventListener("keydown", (e) => {
+  if (e.target.tagName === "INPUT" || e.target.tagName === "TEXTAREA") return;
+
+  switch (e.key.toLowerCase()) {
+    case "?":
+      if (shortcutsModal) shortcutsModal.classList.toggle("hidden");
+      break;
+    case "escape":
+      if (shortcutsModal) shortcutsModal.classList.add("hidden");
+      break;
+  }
+});
 
 init();
 updateFooter();
