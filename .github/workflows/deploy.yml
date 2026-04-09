@@ -24,7 +24,6 @@ jobs:
           node-version: 24
 
       - run: npm ci
-      - run: npm install @parcel/watcher
       - run: npm run build
 
       - uses: actions/upload-pages-artifact@v3
