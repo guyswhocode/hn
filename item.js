@@ -73,17 +73,32 @@ async function renderComment(commentId, depth = 0) {
   commentEl.innerHTML = `
     <div class="py-3">
         <div class="flex items-center gap-2 text-[0.65rem] text-secondary font-semibold tracking-wider mb-2">
+            <button class="collapse-toggle flex items-center justify-center w-4 h-4 rounded bg-surface-container-high dark:bg-white/10 text-primary hover:bg-primary-container hover:text-on-primary transition-colors">
+                <span class="material-symbols-outlined text-[12px]">remove</span>
+            </button>
             <a href="user.html?id=${comment.by}"
                class="text-primary hover:underline transition-colors">${comment.by}</a>
             <span>•</span>
             <span>${timeAgo(comment.time)}</span>
         </div>
-        <div class="comment-content text-[13px] leading-relaxed text-on-surface dark:text-inverse-on-surface prose-sm dark:prose-invert max-w-none">
-            ${comment.text || ""}
+        <div class="comment-body">
+            <div class="comment-content text-[13px] leading-relaxed text-on-surface dark:text-inverse-on-surface prose-sm dark:prose-invert max-w-none">
+                ${comment.text || ""}
+            </div>
+            <div id="kids-${commentId}" class="space-y-2 mt-4"></div>
         </div>
     </div>
-    <div id="kids-${commentId}" class="space-y-2"></div>
   `;
+
+  const toggleBtn = commentEl.querySelector(".collapse-toggle");
+  const commentBody = commentEl.querySelector(".comment-body");
+  const icon = toggleBtn.querySelector(".material-symbols-outlined");
+
+  toggleBtn.addEventListener("click", () => {
+    const isCollapsed = commentBody.classList.toggle("hidden");
+    icon.textContent = isCollapsed ? "add" : "remove";
+    commentEl.classList.toggle("opacity-60", isCollapsed);
+  });
 
   if (comment.kids && comment.kids.length > 0) {
     const kidsContainer = commentEl.querySelector(`#kids-${commentId}`);
@@ -97,35 +112,47 @@ async function renderComment(commentId, depth = 0) {
 }
 
 async function loadNextComments() {
-  if (loadMoreBtn) loadMoreBtn.disabled = true;
-  if (loadMoreBtn) loadMoreBtn.textContent = "Loading...";
-
-  const nextBatch = allCommentIds.slice(
-    currentCommentIndex,
-    currentCommentIndex + COMMENTS_PER_PAGE,
-  );
-  const isFirstBatch = currentCommentIndex === 0;
-
-  for (const commentId of nextBatch) {
-    const commentEl = await renderComment(commentId);
-
-    // Remove skeleton loader as soon as we have the first actual comment element
-    if (isFirstBatch) {
-      const loader = document.getElementById("comments-loader");
-      if (loader) loader.remove();
+  try {
+    if (loadMoreBtn) {
+      loadMoreBtn.disabled = true;
+      loadMoreBtn.innerHTML = `
+        <span class="flex items-center gap-2">
+          <span class="material-symbols-outlined animate-spin text-[14px]">progress_activity</span>
+          Loading
+        </span>
+      `;
     }
 
-    if (commentEl) {
-      if (loadMoreBtn) {
-        commentsContainer.insertBefore(commentEl, loadMoreBtn.parentElement);
-      } else {
-        commentsContainer.appendChild(commentEl);
+    const nextBatch = allCommentIds.slice(
+      currentCommentIndex,
+      currentCommentIndex + COMMENTS_PER_PAGE,
+    );
+    const isFirstBatch = currentCommentIndex === 0;
+
+    for (const commentId of nextBatch) {
+      const commentEl = await renderComment(commentId);
+
+      // Remove skeleton loader as soon as we have the first actual comment element
+      if (isFirstBatch) {
+        const loader = document.getElementById("comments-loader");
+        if (loader) loader.remove();
+      }
+
+      if (commentEl) {
+        if (loadMoreBtn) {
+          commentsContainer.insertBefore(commentEl, loadMoreBtn.parentElement);
+        } else {
+          commentsContainer.appendChild(commentEl);
+        }
       }
     }
-  }
 
-  currentCommentIndex += COMMENTS_PER_PAGE;
-  updateLoadMoreButton();
+    currentCommentIndex += COMMENTS_PER_PAGE;
+  } catch (error) {
+    console.error("Error loading comments:", error);
+  } finally {
+    updateLoadMoreButton();
+  }
 }
 
 function updateLoadMoreButton() {
@@ -148,7 +175,7 @@ function updateLoadMoreButton() {
     loadMoreBtn.addEventListener("click", loadNextComments);
   } else {
     loadMoreBtn.disabled = false;
-    loadMoreBtn.textContent = "Show More Comments";
+    loadMoreBtn.innerHTML = "Show More Comments";
   }
 }
 

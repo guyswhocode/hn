@@ -103,32 +103,42 @@ function createSubmissionElement(item) {
 }
 
 async function loadNextSubmissions() {
-  if (loadMoreBtn) {
-    loadMoreBtn.disabled = true;
-    loadMoreBtn.textContent = "Loading...";
-  }
-
-  const nextBatchIds = allSubmittedIds.slice(
-    currentItemIndex,
-    currentItemIndex + ITEMS_PER_PAGE,
-  );
-  const itemPromises = nextBatchIds.map((id) => fetchItem(id));
-  const items = await Promise.all(itemPromises);
-
-  // Remove loader on first batch
-  if (currentItemIndex === 0) {
-    const loader = document.getElementById("submissions-loader");
-    if (loader) loader.remove();
-  }
-
-  items.forEach((item) => {
-    if (item && !item.deleted && !item.dead) {
-      submissionsContainer.appendChild(createSubmissionElement(item));
+  try {
+    if (loadMoreBtn) {
+      loadMoreBtn.disabled = true;
+      loadMoreBtn.innerHTML = `
+        <span class="flex items-center gap-2">
+          <span class="material-symbols-outlined animate-spin text-[14px]">progress_activity</span>
+          Loading
+        </span>
+      `;
     }
-  });
 
-  currentItemIndex += ITEMS_PER_PAGE;
-  updateLoadMoreButton();
+    const nextBatchIds = allSubmittedIds.slice(
+      currentItemIndex,
+      currentItemIndex + ITEMS_PER_PAGE,
+    );
+    const itemPromises = nextBatchIds.map((id) => fetchItem(id));
+    const items = await Promise.all(itemPromises);
+
+    // Remove loader on first batch
+    if (currentItemIndex === 0) {
+      const loader = document.getElementById("submissions-loader");
+      if (loader) loader.remove();
+    }
+
+    items.forEach((item) => {
+      if (item && !item.deleted && !item.dead) {
+        submissionsContainer.appendChild(createSubmissionElement(item));
+      }
+    });
+
+    currentItemIndex += ITEMS_PER_PAGE;
+  } catch (error) {
+    console.error("Error loading submissions:", error);
+  } finally {
+    updateLoadMoreButton();
+  }
 }
 
 function updateLoadMoreButton() {
@@ -137,7 +147,7 @@ function updateLoadMoreButton() {
   } else {
     loadMoreBtn.classList.remove("hidden");
     loadMoreBtn.disabled = false;
-    loadMoreBtn.textContent = "Show More";
+    loadMoreBtn.innerHTML = "Show More";
   }
 }
 
