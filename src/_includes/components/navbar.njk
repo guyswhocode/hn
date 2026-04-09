@@ -5,32 +5,35 @@
         <div class="flex items-center gap-8 uppercase">
             <a
                 class="text-xl font-bold text-[#2B9720] tracking-tighter font-headline"
-                href="./"
+                href="{% if page.url.startsWith('/user/') or page.url.startsWith('/item/') %}../{% else %}./{% endif %}"
             >
                 HN
             </a>
             <div class="flex items-center gap-6">
                 <a
                     class="text-slate-600 dark:text-slate-400 font-bold tracking-tight text-xs hover:text-[#2B9720] font-headline transition-colors"
-                    href="?type=new"
+                    href="{% if '/user/' in page.url or '/item/' in page.url %}../{% else %}./{% endif %}?type=new"
                     data-type="new"
                     >new</a
                 >
+
                 <a
                     class="text-slate-600 dark:text-slate-400 font-bold tracking-tight text-xs hover:text-[#2B9720] font-headline transition-colors"
-                    href="?type=ask"
+                    href="{% if '/user/' in page.url or '/item/' in page.url %}../{% else %}./{% endif %}?type=ask"
                     data-type="ask"
                     >ask</a
                 >
+
                 <a
                     class="text-slate-600 dark:text-slate-400 font-bold tracking-tight text-xs hover:text-[#2B9720] font-headline transition-colors"
-                    href="?type=show"
+                    href="{% if '/user/' in page.url or '/item/' in page.url %}../{% else %}./{% endif %}?type=show"
                     data-type="show"
                     >show</a
                 >
+
                 <a
                     class="text-slate-600 dark:text-slate-400 font-bold tracking-tight text-xs hover:text-[#2B9720] font-headline transition-colors"
-                    href="?type=jobs"
+                    href="{% if '/user/' in page.url or '/item/' in page.url %}../{% else %}./{% endif %}?type=jobs"
                     data-type="jobs"
                     >jobs</a
                 >
