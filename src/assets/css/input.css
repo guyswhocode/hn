@@ -1,3 +1,9 @@
+@import "tailwindcss";
+@config "../../../tailwind.config.js";
+@source "../../../src/**/*.njk";
+@source "../../../src/**/*.html";
+@source "../../../src/**/*.js";
+
 .material-symbols-outlined {
     font-variation-settings:
         "FILL" 0,
