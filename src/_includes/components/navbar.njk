@@ -1,3 +1,4 @@
+{% set base = '../' if '/user/' in page.url or '/item/' in page.url else './' %}
 <nav
     class="fixed top-0 w-full z-50 bg-[#faf9f9]/80 dark:bg-[#1b1c1c]/80 backdrop-blur-xl border-b border-outline-variant/10"
 >
@@ -5,35 +6,35 @@
         <div class="flex items-center gap-8 uppercase">
             <a
                 class="text-xl font-bold text-[#2B9720] tracking-tighter font-headline"
-                href="{% if page.url.startsWith('/user/') or page.url.startsWith('/item/') %}../{% else %}./{% endif %}"
+                href="{{ base }}"
             >
                 HN
             </a>
             <div class="flex items-center gap-6">
                 <a
                     class="text-slate-600 dark:text-slate-400 font-bold tracking-tight text-xs hover:text-[#2B9720] font-headline transition-colors"
-                    href="{% if '/user/' in page.url or '/item/' in page.url %}../{% else %}./{% endif %}?type=new"
+                    href="{{ base }}?type=new"
                     data-type="new"
                     >new</a
                 >
 
                 <a
                     class="text-slate-600 dark:text-slate-400 font-bold tracking-tight text-xs hover:text-[#2B9720] font-headline transition-colors"
-                    href="{% if '/user/' in page.url or '/item/' in page.url %}../{% else %}./{% endif %}?type=ask"
+                    href="{{ base }}?type=ask"
                     data-type="ask"
                     >ask</a
                 >
 
                 <a
                     class="text-slate-600 dark:text-slate-400 font-bold tracking-tight text-xs hover:text-[#2B9720] font-headline transition-colors"
-                    href="{% if '/user/' in page.url or '/item/' in page.url %}../{% else %}./{% endif %}?type=show"
+                    href="{{ base }}?type=show"
                     data-type="show"
                     >show</a
                 >
 
                 <a
                     class="text-slate-600 dark:text-slate-400 font-bold tracking-tight text-xs hover:text-[#2B9720] font-headline transition-colors"
-                    href="{% if '/user/' in page.url or '/item/' in page.url %}../{% else %}./{% endif %}?type=jobs"
+                    href="{{ base }}?type=jobs"
                     data-type="jobs"
                     >jobs</a
                 >

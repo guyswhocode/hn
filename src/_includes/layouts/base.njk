@@ -1,18 +1,26 @@
+{% set base = '../' if '/user/' in page.url or '/item/' in page.url else './' %}
 <html class="dark" lang="en">
     <head>
         <meta charset="utf-8" />
         <meta content="width=device-width, initial-scale=1.0" name="viewport" />
-        <link rel="icon" type="image/x-icon" href="assets/images/favicon.ico" />
+        <link
+            rel="icon"
+            type="image/x-icon"
+            href="{{ base }}assets/images/favicon.ico"
+        />
         <link
             rel="apple-touch-icon"
-            href="assets/images/apple-touch-icon.png"
+            href="{{ base }}assets/images/apple-touch-icon.png"
         />
         <meta property="og:title" content="HN" />
         <meta
             property="og:description"
             content="Minimal web client for Hacker News content."
         />
-        <meta property="og:image" content="assets/images/og-image.png" />
+        <meta
+            property="og:image"
+            content="{{ base }}assets/images/og-image.png"
+        />
         <meta property="og:type" content="website" />
         <title>HN</title>
         <link
