@@ -1,2 +1,4 @@
+node_modules/
 _site/
-.jekyll-cache/
+src/assets/css/style.css
+.DS_Store

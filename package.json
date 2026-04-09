@@ -1,0 +1,33 @@
+{
+  "name": "hn",
+  "version": "1.0.0",
+  "description": "A clean, distraction-free viewer for Hacker News focused on readability, speed, and keyboard-first navigation. This is a read-only experience - no login, no submissions, no noise. Just better consumption.",
+  "main": "item.js",
+  "scripts": {
+    "start": "npm run dev",
+    "dev": "concurrently \"npm:watch:*\"",
+    "watch:eleventy": "eleventy --serve",
+    "watch:tailwind": "npx @tailwindcss/cli -i ./src/assets/css/input.css -o ./src/assets/css/style.css --watch",
+    "build": "npm run build:tailwind && npm run build:eleventy",
+    "build:eleventy": "eleventy",
+    "build:tailwind": "npx @tailwindcss/cli -i ./src/assets/css/input.css -o ./src/assets/css/style.css --minify"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/guyswhocode/HN.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/guyswhocode/HN/issues"
+  },
+  "homepage": "https://github.com/guyswhocode/HN#readme",
+  "devDependencies": {
+    "@11ty/eleventy": "^3.1.2",
+    "@parcel/watcher": "^2.5.4",
+    "@tailwindcss/cli": "^4.1.18",
+    "@tailwindcss/typography": "^0.5.19",
+    "concurrently": "^9.2.1"
+  }
+}

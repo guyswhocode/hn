@@ -1,0 +1,56 @@
+.material-symbols-outlined {
+    font-variation-settings:
+        "FILL" 0,
+        "wght" 400,
+        "GRAD" 0,
+        "opsz" 24;
+}
+
+.glass-header {
+    background-color: rgba(27, 28, 28, 0.8);
+    backdrop-filter: blur(20px);
+}
+
+.loading-skeleton {
+    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+    background-size: 200% 100%;
+    animation: loading 1.5s infinite;
+}
+
+.comment-content a {
+    color: #2b9720;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+    transition: opacity 0.2s;
+}
+
+.comment-content a:hover {
+    opacity: 0.8;
+}
+
+.comment-content pre {
+    overflow-x: auto;
+    background: rgba(0, 0, 0, 0.05);
+    padding: 0.5rem;
+    border-radius: 4px;
+    font-size: 11px;
+}
+
+.active-story {
+    background-color: rgba(43, 151, 32, 0.08) !important;
+    border-left: 3px solid #2b9720 !important;
+    padding-left: calc(0.5rem - 3px) !important;
+}
+
+.dark .active-story {
+    background-color: rgba(43, 151, 32, 0.15) !important;
+}
+
+@keyframes loading {
+    0% {
+        background-position: 200% 0;
+    }
+    100% {
+        background-position: -200% 0;
+    }
+}

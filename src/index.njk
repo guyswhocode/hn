@@ -1,0 +1,37 @@
+---
+layout: layouts/base.njk
+---
+
+<!-- Main Content Canvas -->
+<main class="pt-16 pb-4 px-6 max-w-4xl mx-auto min-h-screen">
+    <!-- Feed Items -->
+    <div id="feed-container" class="divide-y divide-outline-variant/10">
+        <!-- Skeleton Loader -->
+        <div id="feed-loader" class="space-y-4 pt-4">
+            <div class="animate-pulse flex items-start px-2 py-4">
+                <div
+                    class="w-8 h-8 bg-surface-container-highest/50 rounded mr-4"
+                ></div>
+                <div class="flex-1 space-y-3">
+                    <div
+                        class="h-4 bg-surface-container-highest/50 rounded w-3/4"
+                    ></div>
+                    <div
+                        class="h-3 bg-surface-container-highest/30 rounded w-1/2"
+                    ></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="mt-8 text-center">
+        <button
+            id="load-more-btn"
+            class="hidden inline-flex items-center justify-center px-6 py-2.5 bg-surface-container-high dark:bg-white/10 rounded-lg font-headline font-bold uppercase tracking-widest text-[10px] text-primary hover:bg-primary-container hover:text-on-primary disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300"
+        >
+            Load More
+        </button>
+    </div>
+</main>
+
+{% include "components/load-stories-logic.njk" %} {% include
+"components/keyboard-navigation.njk" %}
