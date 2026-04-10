@@ -4,10 +4,6 @@
 @source "../../../src/**/*.html";
 @source "../../../src/**/*.js";
 
-.material-symbols-outlined.small {
-    font-size: 12px;
-}
-
 .glass-header {
     background-color: rgba(27, 28, 28, 0.8);
     backdrop-filter: blur(20px);
