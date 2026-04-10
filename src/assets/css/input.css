@@ -4,12 +4,8 @@
 @source "../../../src/**/*.html";
 @source "../../../src/**/*.js";
 
-.material-symbols-outlined {
-    font-variation-settings:
-        "FILL" 0,
-        "wght" 400,
-        "GRAD" 0,
-        "opsz" 24;
+.material-symbols-outlined.small {
+    font-size: 12px;
 }
 
 .glass-header {

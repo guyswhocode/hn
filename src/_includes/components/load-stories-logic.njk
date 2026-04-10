@@ -78,20 +78,20 @@
         </div>
         <div class="flex flex-wrap items-center gap-x-4 gap-y-1 text-[0.65rem] text-secondary font-label font-semibold tracking-wider">
             <span class="flex items-center gap-1">
-            <span class="material-symbols-outlined text-[12px]">change_history</span>
+            <span class="material-symbols-outlined small">change_history</span>
             ${story.score || 0}</span>
             <span class="flex items-center gap-1">
-                <span class="material-symbols-outlined text-[12px]">person</span>
+                <span class="material-symbols-outlined small">person</span>
                 <a class="hover:text-on-surface dark:hover:text-white transition-colors underline decoration-outline-variant/30 underline-offset-2"
                 href="user/index.html?id=${story.by}">${story.by}</a>
             </span>
             <span class="flex items-center gap-1">
-                <span class="material-symbols-outlined text-[12px]">schedule</span>
+                <span class="material-symbols-outlined small">schedule</span>
                 ${timeAgo(story.time)}
             </span>
             <a class="flex items-center gap-1 hover:text-primary transition-colors"
             href="item/index.html?id=${story.id}">
-                <span class="material-symbols-outlined text-[12px]">chat</span>
+                <span class="material-symbols-outlined small">chat</span>
                 ${story.descendants || 0}
             </a>
         </div>
