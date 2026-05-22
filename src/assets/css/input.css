@@ -56,3 +56,87 @@
         background-position: -200% 0;
     }
 }
+
+/* ===== DENSITY TOGGLE: Compact Mode ===== */
+/* Reduces vertical spacing throughout the app */
+
+/* Story & submission items */
+.density-compact article {
+    padding-top: 0.5rem !important;
+    padding-bottom: 0.5rem !important;
+}
+
+/* Skeleton / placeholder items */
+.density-compact .animate-pulse.flex.items-start {
+    padding-top: 0.5rem !important;
+    padding-bottom: 0.5rem !important;
+}
+
+/* Feed loader spacing */
+.density-compact #feed-loader.space-y-4 > :not(:last-child),
+.density-compact #bookmark-loader.space-y-4 > :not(:last-child) {
+    margin-bottom: 0.25rem !important;
+}
+
+/* Submissions loader */
+.density-compact #submissions-loader.space-y-4 > :not(:last-child) {
+    margin-bottom: 0.5rem !important;
+}
+
+/* Comment items — reduce vertical padding */
+.density-compact .comment-item > div > [class*="py-"] {
+    padding-top: 0.25rem !important;
+    padding-bottom: 0.25rem !important;
+}
+
+/* Comments container — reduce spacing between top-level comments */
+.density-compact #comments-container > :not(:last-child) {
+    margin-bottom: 0.5rem !important;
+}
+
+/* Nested kids container */
+.density-compact [id^="kids-"] {
+    margin-top: 0.25rem !important;
+}
+.density-compact [id^="kids-"] > :not(:last-child) {
+    margin-bottom: 0.25rem !important;
+}
+
+/* Reduce section heading margins */
+.density-compact #story-detail {
+    margin-bottom: 1.5rem !important;
+}
+.density-compact #user-header {
+    margin-bottom: 1.5rem !important;
+}
+
+/* Navbar — slimmer */
+.density-compact nav > .flex.justify-between {
+    padding-top: 0.5rem !important;
+    padding-bottom: 0.5rem !important;
+}
+
+/* Footer — tighter */
+.density-compact footer {
+    padding-top: 0.5rem !important;
+    padding-bottom: 0.5rem !important;
+    margin-top: 0.75rem !important;
+}
+
+/* User page submissions heading */
+.density-compact #user-header + div > h2 {
+    margin-bottom: 0.75rem !important;
+}
+
+/* Keyboard shortcuts modal spacing */
+.density-compact #shortcuts-modal .space-y-4 > :not(:last-child) {
+    margin-bottom: 0.5rem !important;
+}
+
+/* Comments skeleton loader */
+.density-compact #comments-loader.space-y-8 > :not(:last-child) {
+    margin-bottom: 1rem !important;
+}
+.density-compact #comments-loader.space-y-8 .space-y-3 > :not(:last-child) {
+    margin-bottom: 0.25rem !important;
+}

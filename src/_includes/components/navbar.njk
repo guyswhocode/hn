@@ -1,7 +1,7 @@
 <nav
     class="fixed top-0 w-full z-50 bg-[#faf9f9]/80 dark:bg-[#1b1c1c]/80 backdrop-blur-xl border-b border-outline-variant/10"
 >
-    <div class="flex justify-between items-center px-6 py-3 max-w-4xl mx-auto">
+    <div class="flex justify-between items-center px-6 py-4 max-w-4xl mx-auto">
         <div class="flex items-center gap-8 uppercase">
             <a
                 class="text-xl font-bold text-[#2B9720] tracking-tighter font-headline"
@@ -40,6 +40,13 @@
             </div>
         </div>
         <div class="flex items-center gap-4">
+            <button
+                id="density-toggle"
+                class="material-symbols-outlined cursor-pointer text-secondary hover:text-primary transition-colors !text-lg"
+                title="Toggle compact view"
+            >
+                density_small
+            </button>
             <a
                 href="{{ base }}bookmark"
                 class="material-symbols-outlined cursor-pointer text-secondary hover:text-primary transition-colors !text-lg"
@@ -80,4 +87,31 @@
     }
 
     handleThemeToggle();
+
+    function handleDensityToggle() {
+        const densityToggle = document.getElementById("density-toggle");
+        if (densityToggle) {
+            densityToggle.addEventListener("click", () => {
+                const html = document.documentElement;
+                const isCompact = html.classList.toggle("density-compact");
+                densityToggle.textContent = isCompact ? "density_medium" : "density_small";
+                densityToggle.title = isCompact ? "Switch to comfortable view" : "Switch to compact view";
+                localStorage.setItem("density", isCompact ? "compact" : "comfortable");
+            });
+
+            // Initialize density
+            const savedDensity = localStorage.getItem("density");
+            if (savedDensity === "compact") {
+                document.documentElement.classList.add("density-compact");
+                densityToggle.textContent = "density_medium";
+                densityToggle.title = "Switch to comfortable view";
+            } else {
+                document.documentElement.classList.remove("density-compact");
+                densityToggle.textContent = "density_small";
+                densityToggle.title = "Switch to compact view";
+            }
+        }
+    }
+
+    handleDensityToggle();
 </script>

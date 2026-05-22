@@ -6,7 +6,7 @@
         const isStoryBookmarked = isBookmarked(story.id);
 
         const article = document.createElement("article");
-        article.className = "group relative flex items-start py-4 px-2 rounded-lg transition-colors";
+        article.className = "group relative flex items-start py-5 px-2 rounded-lg transition-colors";
         article.id = `bookmark-${story.id}`;
 
         article.innerHTML = `
@@ -21,7 +21,7 @@
                     </a>
                     <span class="text-[10px] text-secondary/60 dark:text-slate-500 font-label tracking-wide">${getDomain(story.url)}</span>
                 </div>
-                <div class="flex flex-wrap items-center gap-x-4 gap-y-1 text-[0.65rem] text-secondary font-label font-semibold tracking-wider">
+                <div class="flex flex-wrap items-center gap-x-5 gap-y-1 text-[0.65rem] text-secondary font-label font-semibold tracking-wider">
                     <span class="flex items-center gap-1">
                     <span class="material-symbols-outlined !text-[12px]">change_history</span>
                     ${story.score || 0}</span>

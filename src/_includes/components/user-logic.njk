@@ -51,7 +51,7 @@
     function createSubmissionElement(item) {
         const el = document.createElement("div");
         el.className =
-            "py-4 px-2 hover:bg-surface-container-low dark:hover:bg-surface-container-highest/5 rounded-lg transition-colors";
+            "py-5 px-2 hover:bg-surface-container-low dark:hover:bg-surface-container-highest/5 rounded-lg transition-colors";
 
         if (item.type === "story" || item.type === "poll") {
             el.innerHTML = `
@@ -59,7 +59,7 @@
         <span class="text-[10px] font-bold uppercase tracking-widest text-primary/60 border border-primary/20 px-1.5 rounded">${item.type}</span>
         <a href="${item.url || `../item/index.html?id=${item.id}`}" class="text-[15px] font-medium hover:text-primary transition-colors">${item.title}</a>
     </div>
-    <div class="flex gap-x-4 text-[10px] text-secondary font-semibold uppercase tracking-wider">
+    <div class="flex gap-x-5 text-[10px] text-secondary font-semibold uppercase tracking-wider">
     <span class="flex items-center gap-1">
     <span class="material-symbols-outlined !text-[12px]">change_history</span>
     <span>${item.score || 0}</span>
