@@ -9,6 +9,7 @@ A clean, distraction-free viewer for Hacker News focused on readability, speed, 
 * **Dark Mode** : Carefully tuned for comfort - not just inverted colors.
 * **Collapsible Comments** : Collapse entire threads to reduce noise and focus on what matters.
 * **Keyboard Navigation** : Navigate like a pro - fast, efficient, and distraction-free.
+* **Density toggle** : (compact vs comfortable)
 
 
 ## Why this exists
@@ -19,7 +20,6 @@ The original Hacker News is powerful, but this project explores how far we can i
 
 * Focus mode for discussions
 * Highlight new comments
-* Density toggle (compact vs comfortable)
 * Inline link previews
 
 ## Note
