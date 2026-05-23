@@ -63,6 +63,13 @@
                 >
                 <kbd>Shift + Enter</kbd>
             </div>
+            <div class="flex justify-between items-center">
+                <span
+                    class="text-[10px] sm:text-xs font-semibold text-secondary-muted uppercase tracking-widest"
+                    >Bookmarks</span
+                >
+                <kbd>B</kbd>
+            </div>
         </div>
     </div>
 </div>
@@ -166,6 +173,9 @@
                         );
                     if (userLink) userLink.click();
                 }
+                break;
+            case "b":
+                window.location.href = "bookmark/index.html";
                 break;
             case "?":
                 if (shortcutsModal) shortcutsModal.classList.toggle("hidden");
