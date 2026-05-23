@@ -8,6 +8,7 @@
     let allCommentIds = [];
     let currentCommentIndex = 0;
     let loadMoreBtn = null;
+    let storyAuthor = null;
 
     function renderStory(story) {
         const isStoryBookmarked = isBookmarked(story.id);
@@ -54,6 +55,7 @@
         });
 
         commentCountLabel.textContent = `${story.descendants || 0} Comments`;
+        storyAuthor = story.by;
     }
 
     async function renderComment(commentId, depth = 0) {
@@ -71,6 +73,7 @@
             </button>
             <a href="../user/index.html?id=${comment.by}"
                class="text-accent hover:underline transition-colors">${comment.by}</a>
+            ${comment.by === storyAuthor ? `<span class="text-[9px] font-bold uppercase tracking-widest text-accent border border-accent px-1 rounded leading-normal">author</span>` : ""}
             <span>•</span>
             <span>${timeAgo(comment.time)}</span>
         </div>
