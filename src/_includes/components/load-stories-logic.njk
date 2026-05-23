@@ -2,7 +2,7 @@
     const ITEMS_PER_PAGE = 20;
     const TYPE_MAP = {
         new: "newstories",
-        top: "topstories", // HN doesn't have a direct "past" API, usually top is used
+        top: "topstories",
         ask: "askstories",
         show: "showstories",
         jobs: "jobstories",
@@ -16,8 +16,6 @@
     const loadMoreBtn = document.getElementById("load-more-btn");
     const navLinks = document.querySelectorAll("nav a[data-type]");
 
-    // Map UI types to API endpoints
-
     async function fetchStoryIds(type) {
         const endpoint = TYPE_MAP[type] || TYPE_MAP["top"];
         const response = await fetch(`${API_BASE_URL}/${endpoint}.json`);
@@ -26,47 +24,44 @@
 
     function createStoryElement(story, index) {
         const absoluteIndex = currentPage * ITEMS_PER_PAGE + index + 1;
-        const formattedIndex =
-            absoluteIndex < 10 ? `0${absoluteIndex}` : absoluteIndex;
-
+        const formattedIndex = absoluteIndex < 10 ? `0${absoluteIndex}` : absoluteIndex;
         const isStoryBookmarked = isBookmarked(story.id);
 
         const article = document.createElement("article");
-        article.className =
-            "group relative flex items-start py-5 px-2 rounded-lg transition-colors";
+        article.className = "group relative flex items-start py-5 sm:py-6 px-2 rounded transition-colors";
 
         article.innerHTML = `
-    <div class="flex flex-col items-center w-8 mr-4 pt-1">
-        <span class="text-base font-headline font-bold text-primary transition-colors">${formattedIndex}</span>
+    <div class="flex flex-col items-center w-8 mr-4 pt-1 story-index flex-shrink-0">
+        <span class="text-base font-headline font-bold text-accent transition-colors">${formattedIndex}</span>
     </div>
     <div class="flex-1 min-w-0">
-        <div class="flex flex-wrap items-baseline gap-1.5 mb-1">
-            <a class="text-[15px] font-medium text-on-surface dark:text-inverse-on-surface leading-snug hover:text-primary transition-colors"
+        <div class="flex flex-wrap items-baseline gap-1.5 mb-1.5">
+            <a class="story-title text-[15px] font-medium leading-snug hover:text-accent transition-colors"
             href="${story.url || `item/index.html?id=${story.id}`}" ${story.url ? 'target="_blank"' : ""}>
                 ${story.title}
             </a>
-            <span class="text-[10px] text-secondary/60 dark:text-slate-500 font-label tracking-wide">${getDomain(story.url)}</span>
+            <span class="text-[10px] text-muted font-label tracking-wide">${getDomain(story.url)}</span>
         </div>
-        <div class="flex flex-wrap items-center gap-x-5 gap-y-1 text-[0.65rem] text-secondary font-label font-semibold tracking-wider">
+        <div class="story-meta flex flex-wrap items-center gap-x-5 gap-y-1 text-[0.65rem] text-secondary-muted font-label font-semibold tracking-wider">
             <span class="flex items-center gap-1">
             <span class="material-symbols-outlined !text-[12px]">change_history</span>
             ${story.score || 0}</span>
             <span class="flex items-center gap-1">
                 <span class="material-symbols-outlined !text-[12px]">person</span>
-                <a class="hover:text-on-surface dark:hover:text-white transition-colors underline decoration-outline-variant/30 underline-offset-2"
+                <a class="hover:text-accent transition-colors underline decoration-accent underline-offset-2"
                 href="user/index.html?id=${story.by}">${story.by}</a>
             </span>
             <span class="flex items-center gap-1">
                 <span class="material-symbols-outlined !text-[12px]">schedule</span>
                 ${timeAgo(story.time)}
             </span>
-            <a class="flex items-center gap-1 hover:text-primary transition-colors"
+            <a class="flex items-center gap-1 hover:text-accent transition-colors"
             href="item/index.html?id=${story.id}">
                 <span class="material-symbols-outlined !text-[12px]">chat</span>
                 ${story.descendants || 0}
             </a>
-            <button class="bookmark-btn cursor-pointer flex items-center gap-1 hover:text-primary transition-colors" data-id="${story.id}">
-                <span class="material-symbols-outlined !text-[14px] ${isStoryBookmarked ? "material-symbols-filled" : ""}">
+            <button class="bookmark-btn cursor-pointer flex items-center gap-1 hover:text-accent transition-colors" data-id="${story.id}">
+                <span class="material-symbols-outlined !text-[14px] ${isStoryBookmarked ? "text-accent material-symbols-filled" : ""}">
                     bookmark
                 </span>
             </button>
@@ -76,7 +71,6 @@
         return article;
     }
 
-    // Event Delegation for Bookmarks
     feedContainer.addEventListener("click", (e) => {
         const bookmarkBtn = e.target.closest(".bookmark-btn");
         if (bookmarkBtn) {
@@ -84,9 +78,9 @@
             const added = toggleBookmark(id);
             const icon = bookmarkBtn.querySelector(".material-symbols-outlined");
             if (added) {
-                icon.classList.add("material-symbols-filled");
+                icon.classList.add("material-symbols-filled", "text-accent");
             } else {
-                icon.classList.remove("material-symbols-filled");
+                icon.classList.remove("material-symbols-filled", "text-accent");
             }
         }
     });
@@ -94,29 +88,26 @@
     async function loadStories(append = false) {
         if (!append) {
             selectedStoryIndex = -1;
-            let placeholderItem = `<div class="animate-pulse flex items-start px-2 py-5 border-t border-outline-variant/10">
-        <div class="w-8 h-8 bg-surface-container-highest/50 rounded mr-4"></div>
+            let placeholderItem = `<div class="animate-pulse flex items-start px-2 py-5 sm:py-6">
+        <div class="w-8 h-8 skeleton-block rounded mr-4"></div>
         <div class="flex-1 space-y-3">
-            <div class="h-4 bg-surface-container-highest/50 rounded w-4/5"></div>
-            <div class="h-3 bg-surface-container-highest/30 rounded w-1/4"></div>
+            <div class="h-4 skeleton-block rounded w-4/5"></div>
+            <div class="h-3 skeleton-block rounded w-1/4"></div>
         </div>
     </div>`;
             feedContainer.innerHTML = `
-    <div id="feed-loader" class="space-y-4 pt-4">
+    <div id="feed-loader" class="space-y-5 pt-4">
         ${placeholderItem.repeat(10)}
     </div>
     `;
             currentPage = 0;
             currentStoryIds = await fetchStoryIds(currentType);
         } else {
-            // Show loading state on button
             loadMoreBtn.disabled = true;
-            loadMoreBtn.innerHTML = `
-    <span class="flex items-center gap-2">
-        <span class="material-symbols-outlined animate-spin text-[14px] uppercase">progress_activity</span>
+            loadMoreBtn.innerHTML = `<span class="flex items-center gap-1.5">
+        <span class="material-symbols-outlined animate-spin !text-[11px]">progress_activity</span>
         Loading
-    </span>
-    `;
+    </span>`;
         }
 
         const start = currentPage * ITEMS_PER_PAGE;
@@ -126,7 +117,7 @@
         if (pageIds.length === 0) {
             if (!append)
                 feedContainer.innerHTML =
-                    '<div class="py-8 text-center text-secondary">No stories found.</div>';
+                    '<div class="py-10 text-center text-secondary-muted">No stories found.</div>';
             loadMoreBtn.classList.add("hidden");
             return;
         }
@@ -134,7 +125,6 @@
         const storyPromises = pageIds.map((id) => fetchItem(id));
         const stories = await Promise.all(storyPromises);
 
-        // Remove loader BEFORE appending content
         const loader = document.getElementById("feed-loader");
         if (loader && !append) feedContainer.innerHTML = "";
 
@@ -146,7 +136,6 @@
 
         currentPage++;
 
-        // Reset button state
         if (append) {
             loadMoreBtn.disabled = false;
             loadMoreBtn.innerHTML = "Show More";
@@ -159,7 +148,6 @@
         }
     }
 
-    // Event Listeners
     if (loadMoreBtn)
         loadMoreBtn.addEventListener("click", () => loadStories(true));
 
@@ -174,14 +162,13 @@
             );
             if (activeLink) {
                 let activeLinkClasses = [
-                    "text-[#2B9720]",
+                    "text-accent",
                     "border-b-2",
-                    "border-[#2B9720]",
+                    "border-accent-strong",
                     "pb-0.5",
                 ];
                 let inactiveLinkClasses = [
-                    "text-slate-600",
-                    "dark:text-slate-400",
+                    "text-secondary-muted",
                 ];
                 navLinks.forEach((l) => {
                     l.classList.remove(...activeLinkClasses);
@@ -194,6 +181,5 @@
 
         loadStories();
     }
-    // Initial load
     init();
 </script>

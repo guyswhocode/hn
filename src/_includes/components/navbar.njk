@@ -1,68 +1,70 @@
 <nav
-    class="fixed top-0 w-full z-50 bg-[#faf9f9]/80 dark:bg-[#1b1c1c]/80 backdrop-blur-xl border-b border-outline-variant/10"
+    class="fixed top-0 w-full z-50 glass-header"
 >
-    <div class="flex justify-between items-center px-6 py-4 max-w-4xl mx-auto">
-        <div class="flex items-center gap-8 uppercase">
+    <div class="flex justify-between items-center px-4 sm:px-6 py-3 sm:py-4 max-w-4xl mx-auto">
+        <div class="flex items-center gap-4 sm:gap-8 uppercase min-w-0">
             <a
-                class="text-xl font-bold text-[#2B9720] tracking-tighter font-headline"
+                class="text-lg sm:text-xl font-bold text-accent tracking-tighter font-headline terminal-cursor flex-shrink-0"
                 href="{{ base }}"
             >
                 HN
             </a>
-            <div class="flex items-center gap-6">
+            <div class="nav-links flex items-center gap-3 sm:gap-6 overflow-x-auto no-scrollbar">
                 <a
-                    class="text-slate-600 dark:text-slate-400 font-bold tracking-tight text-xs hover:text-[#2B9720] font-headline transition-colors"
+                    class="text-secondary-muted font-bold tracking-tight text-[0.6rem] sm:text-xs hover:text-accent font-headline transition-colors whitespace-nowrap"
                     href="{{ base }}?type=new"
                     data-type="new"
                     >new</a
                 >
-
                 <a
-                    class="text-slate-600 dark:text-slate-400 font-bold tracking-tight text-xs hover:text-[#2B9720] font-headline transition-colors"
+                    class="text-secondary-muted font-bold tracking-tight text-[0.6rem] sm:text-xs hover:text-accent font-headline transition-colors whitespace-nowrap"
                     href="{{ base }}?type=ask"
                     data-type="ask"
                     >ask</a
                 >
-
                 <a
-                    class="text-slate-600 dark:text-slate-400 font-bold tracking-tight text-xs hover:text-[#2B9720] font-headline transition-colors"
+                    class="text-secondary-muted font-bold tracking-tight text-[0.6rem] sm:text-xs hover:text-accent font-headline transition-colors whitespace-nowrap"
                     href="{{ base }}?type=show"
                     data-type="show"
                     >show</a
                 >
-
                 <a
-                    class="text-slate-600 dark:text-slate-400 font-bold tracking-tight text-xs hover:text-[#2B9720] font-headline transition-colors"
+                    class="text-secondary-muted font-bold tracking-tight text-[0.6rem] sm:text-xs hover:text-accent font-headline transition-colors whitespace-nowrap"
                     href="{{ base }}?type=jobs"
                     data-type="jobs"
                     >jobs</a
                 >
             </div>
         </div>
-        <div class="flex items-center gap-4">
+        <div class="flex items-center gap-2 sm:gap-4 flex-shrink-0">
             <button
                 id="density-toggle"
-                class="material-symbols-outlined cursor-pointer text-secondary hover:text-primary transition-colors !text-lg"
+                class="material-symbols-outlined cursor-pointer text-secondary-muted hover:text-accent transition-colors !text-[14px] sm:!text-lg"
                 title="Toggle compact view"
             >
                 density_small
             </button>
             <a
                 href="{{ base }}bookmark"
-                class="material-symbols-outlined cursor-pointer text-secondary hover:text-primary transition-colors !text-lg"
+                class="material-symbols-outlined cursor-pointer text-secondary-muted hover:text-accent transition-colors !text-[14px] sm:!text-lg"
                 title="Bookmarks"
             >
                 bookmark
             </a>
             <button
                 id="theme-toggle"
-                class="material-symbols-outlined cursor-pointer text-secondary hover:text-primary transition-colors !text-lg"
+                class="material-symbols-outlined cursor-pointer text-secondary-muted hover:text-accent transition-colors !text-[14px] sm:!text-lg"
             >
                 dark_mode
             </button>
         </div>
     </div>
 </nav>
+<style>
+/* Hide scrollbar for nav links on mobile */
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+</style>
 <script>
     function handleThemeToggle() {
         const themeToggle = document.getElementById("theme-toggle");
@@ -74,7 +76,6 @@
                 localStorage.setItem("theme", isDark ? "dark" : "light");
             });
 
-            // Initialize theme
             const savedTheme = localStorage.getItem("theme");
             if (savedTheme === "light") {
                 document.documentElement.classList.remove("dark");
@@ -99,7 +100,6 @@
                 localStorage.setItem("density", isCompact ? "compact" : "comfortable");
             });
 
-            // Initialize density
             const savedDensity = localStorage.getItem("density");
             if (savedDensity === "compact") {
                 document.documentElement.classList.add("density-compact");

@@ -6,41 +6,41 @@
         const isStoryBookmarked = isBookmarked(story.id);
 
         const article = document.createElement("article");
-        article.className = "group relative flex items-start py-5 px-2 rounded-lg transition-colors";
+        article.className = "group relative flex items-start py-5 sm:py-6 px-2 rounded transition-colors";
         article.id = `bookmark-${story.id}`;
 
         article.innerHTML = `
-            <div class="flex flex-col items-center w-8 mr-4 pt-1">
-                <span class="text-base font-headline font-bold text-primary transition-colors">${formattedIndex}</span>
+            <div class="flex flex-col items-center w-8 mr-4 pt-1 story-index flex-shrink-0">
+                <span class="text-base font-headline font-bold text-accent transition-colors">${formattedIndex}</span>
             </div>
             <div class="flex-1 min-w-0">
-                <div class="flex flex-wrap items-baseline gap-1.5 mb-1">
-                    <a class="text-[15px] font-medium text-on-surface dark:text-inverse-on-surface leading-snug hover:text-primary transition-colors"
+                <div class="flex flex-wrap items-baseline gap-1.5 mb-1.5">
+                    <a class="story-title text-[15px] font-medium leading-snug hover:text-accent transition-colors"
                     href="../item/index.html?id=${story.id}">
                         ${story.title}
                     </a>
-                    <span class="text-[10px] text-secondary/60 dark:text-slate-500 font-label tracking-wide">${getDomain(story.url)}</span>
+                    <span class="text-[10px] text-muted font-label tracking-wide">${getDomain(story.url)}</span>
                 </div>
-                <div class="flex flex-wrap items-center gap-x-5 gap-y-1 text-[0.65rem] text-secondary font-label font-semibold tracking-wider">
+                <div class="story-meta flex flex-wrap items-center gap-x-5 gap-y-1 text-[0.65rem] text-secondary-muted font-label font-semibold tracking-wider">
                     <span class="flex items-center gap-1">
                     <span class="material-symbols-outlined !text-[12px]">change_history</span>
                     ${story.score || 0}</span>
                     <span class="flex items-center gap-1">
                         <span class="material-symbols-outlined !text-[12px]">person</span>
-                        <a class="hover:text-on-surface dark:hover:text-white transition-colors underline decoration-outline-variant/30 underline-offset-2"
+                        <a class="hover:text-accent transition-colors underline decoration-accent underline-offset-2"
                         href="../user/index.html?id=${story.by}">${story.by}</a>
                     </span>
                     <span class="flex items-center gap-1">
                         <span class="material-symbols-outlined !text-[12px]">schedule</span>
                         ${timeAgo(story.time)}
                     </span>
-                    <a class="flex items-center gap-1 hover:text-primary transition-colors"
+                    <a class="flex items-center gap-1 hover:text-accent transition-colors"
                     href="../item/index.html?id=${story.id}">
                         <span class="material-symbols-outlined !text-[12px]">chat</span>
                         ${story.descendants || 0}
                     </a>
-                    <button class="bookmark-btn cursor-pointer flex items-center gap-1 hover:text-primary transition-colors" data-id="${story.id}">
-                        <span class="material-symbols-outlined !text-[14px] ${isStoryBookmarked ? "material-symbols-filled" : ""}">
+                    <button class="bookmark-btn cursor-pointer flex items-center gap-1 hover:text-accent transition-colors" data-id="${story.id}">
+                        <span class="material-symbols-outlined !text-[14px] ${isStoryBookmarked ? "text-accent material-symbols-filled" : ""}">
                             bookmark
                         </span>
                     </button>
@@ -54,7 +54,7 @@
         const bookmarks = getBookmarks();
 
         if (bookmarks.length === 0) {
-            bookmarkContainer.innerHTML = '<div class="py-8 text-center text-secondary">No bookmarks found.</div>';
+            bookmarkContainer.innerHTML = '<div class="py-10 text-center text-secondary-muted">No bookmarks found.</div>';
             return;
         }
 
@@ -69,21 +69,18 @@
         });
     }
 
-    // Event Delegation for Bookmarks
     bookmarkContainer.addEventListener("click", (e) => {
         const bookmarkBtn = e.target.closest(".bookmark-btn");
         if (bookmarkBtn) {
             const id = parseInt(bookmarkBtn.dataset.id);
             const added = toggleBookmark(id);
 
-            // In the bookmark page, if we unbookmark, we might want to remove the item from the list
             if (!added) {
                 const article = document.getElementById(`bookmark-${id}`);
                 if (article) {
                     article.remove();
-                    // If no more bookmarks, show empty state
                     if (bookmarkContainer.children.length === 0) {
-                        bookmarkContainer.innerHTML = '<div class="py-8 text-center text-secondary">No bookmarks found.</div>';
+                        bookmarkContainer.innerHTML = '<div class="py-10 text-center text-secondary-muted">No bookmarks found.</div>';
                     }
                 }
             }

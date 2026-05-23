@@ -3,19 +3,19 @@ layout: layouts/base.njk
 permalink: /bookmark/index.html
 ---
 
-<main class="pt-16 pb-4 px-6 max-w-4xl mx-auto min-h-screen">
-    <header class="mb-4">
-        <h1 class="text-xl font-headline font-bold uppercase tracking-widest text-primary">Bookmarks</h1>
+<main class="pt-16 pb-6 px-4 sm:px-6 max-w-4xl mx-auto min-h-screen">
+    <header class="pt-2 sm:pt-4 mb-6 sm:mb-8">
+        <h1 class="text-lg sm:text-xl font-headline font-bold uppercase tracking-widest text-accent">Bookmarks</h1>
     </header>
     <!-- Feed Items -->
-    <div id="bookmark-container" class="divide-y divide-outline-variant/10">
+    <div id="bookmark-container" class="divide-default">
         <!-- Loader -->
-        <div id="bookmark-loader" class="space-y-4 pt-4">
+        <div id="bookmark-loader" class="space-y-5 pt-4">
             <div class="animate-pulse flex items-start px-2 py-5">
-                <div class="w-8 h-8 bg-surface-container-highest/50 rounded mr-4"></div>
+                <div class="w-8 h-8 skeleton-block rounded mr-4"></div>
                 <div class="flex-1 space-y-3">
-                    <div class="h-4 bg-surface-container-highest/50 rounded w-3/4"></div>
-                    <div class="h-3 bg-surface-container-highest/30 rounded w-1/2"></div>
+                    <div class="h-4 skeleton-block rounded w-3/4"></div>
+                    <div class="h-3 skeleton-block rounded w-1/2"></div>
                 </div>
             </div>
         </div>

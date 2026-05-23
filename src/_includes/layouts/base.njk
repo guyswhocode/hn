@@ -42,9 +42,14 @@
         </style>
     </head>
     <body
-        class="bg-background dark:bg-on-background text-on-surface dark:text-inverse-on-surface font-body selection:bg-primary-container selection:text-on-primary-container"
+        class="font-body"
+        style="background-color: var(--bg-primary); color: var(--text-primary);"
     >
+        <!-- Scan lines overlay -->
+        <div class="scanlines"></div>
         {% include "components/navbar.njk" %}
+        <!-- Terminal status bar -->
+        <div class="fixed top-0 left-0 w-full h-[1px] z-[60]" style="background-color: var(--accent-border);"></div>
         {% include "components/shared-logic.njk" %}
         {{ content | safe }}
         {% include "components/footer.njk" %}

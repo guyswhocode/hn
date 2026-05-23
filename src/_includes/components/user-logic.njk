@@ -25,8 +25,8 @@
 
     function renderUserHeader(user) {
         userHeader.innerHTML = `
-    <h1 class="text-4xl font-headline font-bold tracking-tight mb-4 text-primary">${user.id}</h1>
-    <div class="flex flex-wrap gap-6 text-xs font-label font-semibold uppercase tracking-wider text-secondary mb-6">
+    <h1 class="text-3xl sm:text-4xl font-headline font-bold tracking-tight mb-4 text-accent">${user.id}</h1>
+    <div class="flex flex-wrap gap-4 sm:gap-6 text-xs font-label font-semibold uppercase tracking-wider text-secondary-muted mb-6">
     <span class="flex items-center gap-1.5">
         <span class="material-symbols-outlined text-base">calendar_today</span>
         Joined ${formatDate(user.created)}
@@ -39,7 +39,7 @@
     ${
         user.about
             ? `
-    <div class="prose dark:prose-invert max-w-none text-sm leading-relaxed text-on-surface/80 dark:text-inverse-on-surface/80 bg-surface-container-low dark:bg-on-background/10 p-6 rounded-xl border border-outline-variant/10">
+    <div class="max-w-none text-sm leading-relaxed bg-accent-glow p-5 sm:p-6 rounded border border-accent-border-subtle" style="color: var(--text-primary);">
         ${user.about}
     </div>
     `
@@ -51,31 +51,31 @@
     function createSubmissionElement(item) {
         const el = document.createElement("div");
         el.className =
-            "py-5 px-2 hover:bg-surface-container-low dark:hover:bg-surface-container-highest/5 rounded-lg transition-colors";
+            "py-4 sm:py-5 px-2 hover:bg-accent-subtle rounded transition-colors";
 
         if (item.type === "story" || item.type === "poll") {
             el.innerHTML = `
-    <div class="flex flex-wrap items-baseline gap-2 mb-1">
-        <span class="text-[10px] font-bold uppercase tracking-widest text-primary/60 border border-primary/20 px-1.5 rounded">${item.type}</span>
-        <a href="${item.url || `../item/index.html?id=${item.id}`}" class="text-[15px] font-medium hover:text-primary transition-colors">${item.title}</a>
+    <div class="flex flex-wrap items-baseline gap-2 mb-1.5">
+        <span class="text-[10px] font-bold uppercase tracking-widest text-accent-muted border border-accent px-1.5 rounded">${item.type}</span>
+        <a href="${item.url || `../item/index.html?id=${item.id}`}" class="text-[15px] font-medium hover:text-accent transition-colors">${item.title}</a>
     </div>
-    <div class="flex gap-x-5 text-[10px] text-secondary font-semibold uppercase tracking-wider">
+    <div class="flex gap-x-5 text-[10px] text-secondary-muted font-semibold uppercase tracking-wider">
     <span class="flex items-center gap-1">
     <span class="material-symbols-outlined !text-[12px]">change_history</span>
     <span>${item.score || 0}</span>
     </span>
         <span>${timeAgo(item.time)}</span>
-        <a href="../item/index.html?id=${item.id}" class="hover:text-primary transition-colors">${item.descendants || 0} comments</a>
+        <a href="../item/index.html?id=${item.id}" class="hover:text-accent transition-colors">${item.descendants || 0} comments</a>
     </div>
     `;
         } else if (item.type === "comment") {
             el.innerHTML = `
     <div class="flex flex-wrap items-baseline gap-2 mb-2">
-        <span class="text-[10px] font-bold uppercase tracking-widest text-secondary/60 border border-outline-variant/20 px-1.5 rounded">comment</span>
-        <span class="text-[10px] text-secondary font-semibold uppercase tracking-wider">${timeAgo(item.time)} on </span>
-        <a href="../item/index.html?id=${item.parent}" class="text-[11px] font-medium hover:text-primary transition-colors underline decoration-outline-variant/30">parent item</a>
+        <span class="text-[10px] font-bold uppercase tracking-widest text-secondary-muted border border-accent px-1.5 rounded">comment</span>
+        <span class="text-[10px] text-secondary-muted font-semibold uppercase tracking-wider">${timeAgo(item.time)} on </span>
+        <a href="../item/index.html?id=${item.parent}" class="text-[11px] font-medium hover:text-accent transition-colors underline decoration-accent">parent item</a>
     </div>
-    <div class="text-[13px] leading-relaxed text-on-surface/70 dark:text-inverse-on-surface/70 line-clamp-3">
+    <div class="text-[13px] leading-relaxed text-secondary-muted line-clamp-3">
         ${item.text || ""}
     </div>
     `;
@@ -88,12 +88,10 @@
         try {
             if (loadMoreBtn) {
                 loadMoreBtn.disabled = true;
-                loadMoreBtn.innerHTML = `
-        <span class="flex items-center gap-2">
-        <span class="material-symbols-outlined animate-spin text-[14px]">progress_activity</span>
+                loadMoreBtn.innerHTML = `<span class="flex items-center gap-1.5">
+        <span class="material-symbols-outlined animate-spin !text-[11px]">progress_activity</span>
         Loading
-        </span>
-    `;
+        </span>`;
             }
 
             const nextBatchIds = allSubmittedIds.slice(
@@ -103,7 +101,6 @@
             const itemPromises = nextBatchIds.map((id) => fetchItem(id));
             const items = await Promise.all(itemPromises);
 
-            // Remove loader on first batch
             if (currentItemIndex === 0) {
                 const loader = document.getElementById("submissions-loader");
                 if (loader) loader.remove();
@@ -147,7 +144,7 @@
         const user = await fetchUser(userId);
         if (!user) {
             userHeader.innerHTML =
-                '<div class="text-secondary italic">User not found.</div>';
+                '<div class="text-secondary-muted italic">User not found.</div>';
             const loader = document.getElementById("submissions-loader");
             if (loader) loader.remove();
             return;
@@ -162,7 +159,7 @@
             const loader = document.getElementById("submissions-loader");
             if (loader) loader.remove();
             submissionsContainer.innerHTML =
-                '<div class="text-secondary text-sm italic py-8 text-center">No submissions yet.</div>';
+                '<div class="text-secondary-muted text-sm italic py-8 text-center">No submissions yet.</div>';
         }
     }
 

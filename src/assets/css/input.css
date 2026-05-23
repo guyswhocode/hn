@@ -4,139 +4,337 @@
 @source "../../../src/**/*.html";
 @source "../../../src/**/*.js";
 
-.glass-header {
-    background-color: rgba(27, 28, 28, 0.8);
-    backdrop-filter: blur(20px);
+/* ===== HACKER THEME VARIABLES ===== */
+:root {
+    /* Dark mode (default) - bright neon green */
+    --accent: #00ff41;
+    --accent-hover: #00cc33;
+    --accent-subtle: rgba(0, 255, 65, 0.08);
+    --accent-glow: rgba(0, 255, 65, 0.04);
+    --accent-border: rgba(0, 255, 65, 0.12);
+    --accent-border-subtle: rgba(0, 255, 65, 0.06);
+    --accent-muted-text: rgba(0, 255, 65, 0.6);
+    --accent-decoration: rgba(0, 255, 65, 0.18);
+    --accent-bg-btn: rgba(0, 255, 65, 0.10);
+    --accent-bg-btn-hover: rgba(0, 255, 65, 0.20);
+    --accent-scanline: rgba(0, 255, 65, 0.015);
+    --accent-scrollbar: rgba(0, 255, 65, 0.25);
+    --accent-loader-from: rgba(0, 255, 65, 0.06);
+    --accent-loader-to: rgba(0, 255, 65, 0.15);
+    --accent-skeleton: rgba(0, 255, 65, 0.06);
+    --accent-selection: #00ff41;
+    --accent-selection-text: #000;
+    --bg-primary: #0a0a0a;
+    --bg-surface: #0d0d0d;
+    --bg-header: rgba(10, 10, 10, 0.85);
+    --bg-header-light: rgba(245, 245, 240, 0.85);
+    --text-primary: #d4d4d4;
+    --text-secondary: #888;
+    --text-muted: #666;
+    --text-link-hover: #d4d4d4;
+    --text-btn-hover: #000;
+    --border-default: rgba(0, 255, 65, 0.06);
 }
 
+/* Light mode - deep forest green for readability */
+:root:not(.dark) {
+    --accent: #006b1f;
+    --accent-hover: #008527;
+    --accent-subtle: rgba(0, 107, 31, 0.06);
+    --accent-glow: rgba(0, 107, 31, 0.03);
+    --accent-border: rgba(0, 107, 31, 0.12);
+    --accent-border-subtle: rgba(0, 107, 31, 0.06);
+    --accent-muted-text: rgba(0, 107, 31, 0.7);
+    --accent-decoration: rgba(0, 107, 31, 0.2);
+    --accent-bg-btn: rgba(0, 107, 31, 0.10);
+    --accent-bg-btn-hover: rgba(0, 107, 31, 0.20);
+    --accent-scanline: rgba(0, 107, 31, 0.012);
+    --accent-scrollbar: rgba(0, 107, 31, 0.2);
+    --accent-loader-from: rgba(0, 107, 31, 0.05);
+    --accent-loader-to: rgba(0, 107, 31, 0.12);
+    --accent-skeleton: rgba(0, 0, 0, 0.04);
+    --accent-selection: #006b1f;
+    --accent-selection-text: #fff;
+    --bg-primary: #f5f5f0;
+    --bg-surface: #efefe8;
+    --bg-header: rgba(245, 245, 240, 0.85);
+    --bg-header-light: rgba(245, 245, 240, 0.85);
+    --text-primary: #1a1a1a;
+    --text-secondary: #666;
+    --text-muted: #888;
+    --text-link-hover: #006b1f;
+    --text-btn-hover: #fff;
+    --border-default: rgba(0, 107, 31, 0.06);
+}
+
+/* ===== UTILITY CLASSES (mode-aware) ===== */
+.text-accent { color: var(--accent); }
+.border-accent { border-color: var(--accent-border); }
+.border-accent-strong { border-color: var(--accent); }
+.bg-accent-subtle { background-color: var(--accent-subtle); }
+.bg-accent-glow { background-color: var(--accent-glow); }
+.bg-accent-btn { background-color: var(--accent-bg-btn); }
+.text-accent-muted { color: var(--accent-muted-text); }
+.decoration-accent { text-decoration-color: var(--accent-decoration); }
+.text-secondary-muted { color: var(--text-secondary); }
+.text-muted { color: var(--text-muted); }
+.border-default { border-color: var(--border-default); }
+.bg-surface { background-color: var(--bg-surface); }
+.text-btn-hover { color: var(--text-btn-hover); }
+
+@media (hover: hover) {
+    .hover\:text-accent:hover { color: var(--accent); }
+    .hover\:bg-accent-hover:hover { background-color: var(--accent-bg-btn-hover); }
+}
+
+/* ===== BASE ===== */
+::selection {
+    background: var(--accent-selection) !important;
+    color: var(--accent-selection-text) !important;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+::-webkit-scrollbar-thumb {
+    background: var(--accent-scrollbar);
+    border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: color-mix(in srgb, var(--accent-scrollbar) 80%, transparent);
+}
+
+/* ===== TERMINAL CURSOR ===== */
+@keyframes cursor-blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
+}
+
+.terminal-cursor::after {
+    content: "_";
+    animation: cursor-blink 1s step-end infinite;
+    color: var(--accent);
+    font-weight: 700;
+}
+
+/* ===== SCAN LINES ===== */
+.scanlines {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 9999;
+    background: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 2px,
+        var(--accent-scanline) 2px,
+        var(--accent-scanline) 4px
+    );
+}
+
+/* ===== HEADER ===== */
+.glass-header {
+    background-color: var(--bg-header);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--accent-border);
+}
+
+/* ===== LOADING SKELETON ===== */
 .loading-skeleton {
-    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+    background: linear-gradient(90deg, var(--accent-loader-from) 25%, var(--accent-loader-to) 50%, var(--accent-loader-from) 75%);
     background-size: 200% 100%;
     animation: loading 1.5s infinite;
 }
 
+@keyframes loading {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+}
+
+.skeleton-block {
+    background: var(--accent-skeleton);
+    border-radius: 2px;
+}
+
+/* ===== COMMENT LINKS ===== */
 .comment-content a {
-    color: #2b9720;
+    color: var(--accent);
     text-decoration: underline;
     text-underline-offset: 2px;
     transition: opacity 0.2s;
 }
-
 .comment-content a:hover {
-    opacity: 0.8;
+    opacity: 0.7;
 }
-
 .comment-content pre {
     overflow-x: auto;
-    background: rgba(0, 0, 0, 0.05);
+    background: var(--accent-subtle);
     padding: 0.5rem;
     border-radius: 4px;
     font-size: 11px;
+    border: 1px solid var(--accent-border-subtle);
 }
 
+/* ===== ACTIVE STORY (keyboard nav highlight) ===== */
 .active-story {
-    background-color: rgba(43, 151, 32, 0.08) !important;
-    border-left: 3px solid #2b9720 !important;
-    padding-left: calc(0.5rem - 3px) !important;
+    background-color: var(--accent-glow) !important;
+    border-left: 2px solid var(--accent) !important;
+    padding-left: calc(0.5rem - 2px) !important;
 }
 
-.dark .active-story {
-    background-color: rgba(43, 151, 32, 0.15) !important;
-}
-
+/* ===== MATERIAL ICONS ===== */
 .material-symbols-filled {
     font-variation-settings: "FILL" 1;
 }
 
-@keyframes loading {
-    0% {
-        background-position: 200% 0;
-    }
-    100% {
-        background-position: -200% 0;
-    }
+/* ===== DIVIDE BORDER (subtle, mode-aware) ===== */
+.divide-default > :not(:last-child) {
+    border-top-width: 1px;
+    border-top-style: solid;
+    border-top-color: var(--border-default);
+}
+
+.divide-default > :not(:last-child) {
+    border-bottom-width: 0;
+}
+
+/* ===== KEYBOARD SHORTCUT KBD ===== */
+kbd {
+    font-family: inherit;
+    padding: 2px 8px;
+    border-radius: 3px;
+    font-size: 10px;
+    font-weight: 700;
+    border: 1px solid var(--accent-border);
+    background: var(--accent-bg-btn);
+    color: var(--accent);
+    letter-spacing: 0.05em;
 }
 
 /* ===== DENSITY TOGGLE: Compact Mode ===== */
-/* Reduces vertical spacing throughout the app */
-
-/* Story & submission items */
 .density-compact article {
     padding-top: 0.5rem !important;
     padding-bottom: 0.5rem !important;
 }
-
-/* Skeleton / placeholder items */
 .density-compact .animate-pulse.flex.items-start {
     padding-top: 0.5rem !important;
     padding-bottom: 0.5rem !important;
 }
-
-/* Feed loader spacing */
 .density-compact #feed-loader.space-y-4 > :not(:last-child),
 .density-compact #bookmark-loader.space-y-4 > :not(:last-child) {
     margin-bottom: 0.25rem !important;
 }
-
-/* Submissions loader */
 .density-compact #submissions-loader.space-y-4 > :not(:last-child) {
     margin-bottom: 0.5rem !important;
 }
-
-/* Comment items — reduce vertical padding */
 .density-compact .comment-item > div > [class*="py-"] {
     padding-top: 0.25rem !important;
     padding-bottom: 0.25rem !important;
 }
-
-/* Comments container — reduce spacing between top-level comments */
 .density-compact #comments-container > :not(:last-child) {
     margin-bottom: 0.5rem !important;
 }
-
-/* Nested kids container */
 .density-compact [id^="kids-"] {
     margin-top: 0.25rem !important;
 }
 .density-compact [id^="kids-"] > :not(:last-child) {
     margin-bottom: 0.25rem !important;
 }
-
-/* Reduce section heading margins */
 .density-compact #story-detail {
     margin-bottom: 1.5rem !important;
 }
 .density-compact #user-header {
     margin-bottom: 1.5rem !important;
 }
-
-/* Navbar — slimmer */
 .density-compact nav > .flex.justify-between {
     padding-top: 0.5rem !important;
     padding-bottom: 0.5rem !important;
 }
-
-/* Footer — tighter */
 .density-compact footer {
     padding-top: 0.5rem !important;
     padding-bottom: 0.5rem !important;
     margin-top: 0.75rem !important;
 }
-
-/* User page submissions heading */
 .density-compact #user-header + div > h2 {
     margin-bottom: 0.75rem !important;
 }
-
-/* Keyboard shortcuts modal spacing */
 .density-compact #shortcuts-modal .space-y-4 > :not(:last-child) {
     margin-bottom: 0.5rem !important;
 }
-
-/* Comments skeleton loader */
 .density-compact #comments-loader.space-y-8 > :not(:last-child) {
     margin-bottom: 1rem !important;
 }
 .density-compact #comments-loader.space-y-8 .space-y-3 > :not(:last-child) {
     margin-bottom: 0.25rem !important;
+}
+
+/* ===== MOBILE RESPONSIVE ===== */
+@media (max-width: 640px) {
+    .nav-links {
+        gap: 0.5rem;
+    }
+    .nav-links a {
+        font-size: 0.65rem;
+    }
+    .story-meta {
+        gap: 0.5rem;
+        row-gap: 0.15rem;
+    }
+    main {
+        padding-left: 1rem !important;
+        padding-right: 1rem !important;
+    }
+    article {
+        padding-top: 0.75rem !important;
+        padding-bottom: 0.75rem !important;
+    }
+    .story-title {
+        font-size: 0.8125rem !important;
+    }
+    .story-index {
+        font-size: 0.8125rem !important;
+        min-width: 1.5rem !important;
+    }
+}
+
+/* ===== ACCENT BUTTON (filled, terminal-style) ===== */
+.btn-accent {
+    background-color: var(--bg-primary);
+    color: var(--accent);
+    border: 1px solid var(--accent);
+    transition: background-color 0.2s, transform 0.1s;
+    cursor: pointer;
+}
+
+.btn-accent:hover {
+    background-color: var(--accent-subtle);
+}
+
+.btn-accent:active {
+    transform: scale(0.98);
+}
+
+.btn-accent:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+    transform: none;
+}
+
+/* ===== FOCUS STYLES ===== */
+a:focus-visible,
+button:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
 }

@@ -13,42 +13,42 @@
         const isStoryBookmarked = isBookmarked(story.id);
 
         storyDetail.innerHTML = `
-    <h1 class="text-3xl font-headline font-bold tracking-tight mb-2">
-      <a href="${story.url || "#"}" target="_blank" class="hover:text-primary transition-colors">${story.title}</a>
-      ${story.url ? `<span class="text-xs text-secondary font-normal ml-2">${getDomain(story.url)}</span>` : ""}
+    <h1 class="text-2xl sm:text-3xl font-headline font-bold tracking-tight mb-3">
+      <a href="${story.url || "#"}" target="_blank" class="hover:text-accent transition-colors">${story.title}</a>
+      ${story.url ? `<span class="text-xs text-muted font-normal ml-2">${getDomain(story.url)}</span>` : ""}
     </h1>
-    <div class="flex flex-wrap items-center gap-x-5 gap-y-1 text-[0.7rem] text-secondary font-label font-semibold uppercase tracking-wider">
-        <span class="flex items-center gap-1 text-[#2B9720]">${story.score || 0} points</span>
+    <div class="flex flex-wrap items-center gap-x-4 sm:gap-x-5 gap-y-1.5 text-[0.65rem] sm:text-[0.7rem] text-secondary-muted font-label font-semibold uppercase tracking-wider">
+        <span class="flex items-center gap-1 text-accent">${story.score || 0} points</span>
         <span class="flex items-center gap-1">
             <span class="material-symbols-outlined text-[14px]">person</span>
-            <a class="hover:text-on-surface dark:hover:text-white transition-colors underline decoration-outline-variant/30 underline-offset-2"
+            <a class="hover:text-accent transition-colors underline decoration-accent underline-offset-2"
                href="../user/index.html?id=${story.by}">${story.by}</a>
         </span>
         <span class="flex items-center gap-1">
             <span class="material-symbols-outlined text-[14px]">schedule</span>
             ${timeAgo(story.time)}
         </span>
-        <button class="bookmark-btn flex items-center gap-1 hover:text-primary transition-colors" data-id="${story.id}">
-            <span class="material-symbols-outlined !text-[16px] ${isStoryBookmarked ? "material-symbols-filled" : ""}">
+        <button class="bookmark-btn flex items-center gap-1 hover:text-accent transition-colors" data-id="${story.id}" style="color: var(--text-secondary);">
+            <span class="material-symbols-outlined !text-[16px] ${isStoryBookmarked ? "text-accent material-symbols-filled" : ""}">
                 bookmark
             </span>
-            <span>${isStoryBookmarked ? "Bookmarked" : "Bookmark"}</span>
+            <span class="text-[10px] sm:text-[11px]">${isStoryBookmarked ? "Bookmarked" : "Bookmark"}</span>
         </button>
     </div>
-    ${story.text ? `<div class="mt-6 text-sm text-on-surface dark:text-inverse-on-surface prose dark:prose-invert max-w-none">${story.text}</div>` : ""}
+    ${story.text ? `<div class="mt-8 text-sm leading-relaxed max-w-none">${story.text}</div>` : ""}
   `;
 
         const bookmarkBtn = storyDetail.querySelector(".bookmark-btn");
         bookmarkBtn.addEventListener("click", () => {
             const added = toggleBookmark(story.id);
             const icon = bookmarkBtn.querySelector(".material-symbols-outlined");
-            const text = bookmarkBtn.querySelector("span:not(.material-symbols-outlined)");
+            const text = bookmarkBtn.querySelector("span:last-child");
 
             if (added) {
-                icon.classList.add("material-symbols-filled");
+                icon.classList.add("material-symbols-filled", "text-accent");
                 text.textContent = "Bookmarked";
             } else {
-                icon.classList.remove("material-symbols-filled");
+                icon.classList.remove("material-symbols-filled", "text-accent");
                 text.textContent = "Bookmark";
             }
         });
@@ -61,24 +61,24 @@
         if (!comment || comment.deleted || comment.dead) return null;
 
         const commentEl = document.createElement("div");
-        commentEl.className = `comment-item ${depth > 0 ? "ml-4 md:ml-8 border-l border-outline-variant/10 pl-4 md:pl-6" : ""}`;
+        commentEl.className = `comment-item ${depth > 0 ? "ml-3 sm:ml-8 border-l border-default pl-3 sm:pl-6" : ""}`;
 
         commentEl.innerHTML = `
-    <div class="py-4">
-        <div class="flex items-center gap-2 text-[0.65rem] text-secondary font-semibold tracking-wider mb-3">
-            <button class="collapse-toggle flex items-center justify-center w-4 h-4 rounded bg-surface-container-high dark:bg-white/10 text-primary hover:bg-primary-container hover:text-on-primary transition-colors">
+    <div class="py-4 sm:py-5">
+        <div class="flex items-center gap-2 text-[0.65rem] text-secondary-muted font-semibold tracking-wider mb-3">
+            <button class="collapse-toggle flex items-center justify-center w-4 h-4 rounded bg-accent-btn border-accent text-accent hover:bg-accent-hover transition-colors" style="color: var(--accent);">
                 <span class="material-symbols-outlined !text-[12px]">remove</span>
             </button>
             <a href="../user/index.html?id=${comment.by}"
-               class="text-primary hover:underline transition-colors">${comment.by}</a>
+               class="text-accent hover:underline transition-colors">${comment.by}</a>
             <span>•</span>
             <span>${timeAgo(comment.time)}</span>
         </div>
         <div class="comment-body">
-            <div class="comment-content text-[13px] leading-relaxed text-on-surface dark:text-inverse-on-surface prose-sm dark:prose-invert max-w-none">
+            <div class="comment-content text-[13px] leading-relaxed max-w-none">
                 ${comment.text || ""}
             </div>
-            <div id="kids-${commentId}" class="space-y-3 mt-6"></div>
+            <div id="kids-${commentId}" class="space-y-4 sm:space-y-5 mt-5 sm:mt-6"></div>
         </div>
     </div>
   `;
@@ -108,12 +108,10 @@
         try {
             if (loadMoreBtn) {
                 loadMoreBtn.disabled = true;
-                loadMoreBtn.innerHTML = `
-        <span class="flex items-center gap-2">
-          <span class="material-symbols-outlined animate-spin text-[14px]">progress_activity</span>
+                loadMoreBtn.innerHTML = `<span class="flex items-center gap-1.5">
+          <span class="material-symbols-outlined animate-spin !text-[11px]">progress_activity</span>
           Loading
-        </span>
-      `;
+        </span>`;
             }
 
             const nextBatch = allCommentIds.slice(
@@ -125,7 +123,6 @@
             for (const commentId of nextBatch) {
                 const commentEl = await renderComment(commentId);
 
-                // Remove skeleton loader as soon as we have the first actual comment element
                 if (isFirstBatch) {
                     const loader = document.getElementById("comments-loader");
                     if (loader) loader.remove();
@@ -160,9 +157,9 @@
 
         if (!loadMoreBtn) {
             const btnContainer = document.createElement("div");
-            btnContainer.className = "mt-8 text-center pb-12";
+            btnContainer.className = "mt-10 sm:mt-12 text-center pb-12";
             btnContainer.innerHTML = `
-      <button id="load-more-comments" class="inline-flex items-center justify-center px-6 py-2.5 bg-surface-container-high dark:bg-white/10 rounded-lg font-headline font-bold uppercase tracking-widest text-[10px] text-primary hover:bg-primary-container hover:text-on-primary disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer transition-all duration-300">
+      <button id="load-more-comments" class="inline-flex items-center justify-center px-5 sm:px-6 py-2.5 sm:py-3 btn-accent font-headline font-bold uppercase tracking-widest text-[9px] sm:text-[11px]">
         Show More Comments
       </button>
     `;
@@ -189,7 +186,7 @@
             const loader = document.getElementById("comments-loader");
             if (loader) loader.remove();
             commentsContainer.innerHTML =
-                '<div class="text-secondary text-xs italic">Story not found.</div>';
+                '<div class="text-secondary-muted text-xs italic">Story not found.</div>';
             return;
         }
 
@@ -202,7 +199,7 @@
             const loader = document.getElementById("comments-loader");
             if (loader) loader.remove();
             commentsContainer.innerHTML =
-                '<div class="text-secondary text-xs italic">No comments yet.</div>';
+                '<div class="text-secondary-muted text-xs italic">No comments yet.</div>';
         }
     }
 
