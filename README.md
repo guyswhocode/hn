@@ -6,6 +6,7 @@ A clean, distraction-free viewer for Hacker News focused on readability, speed, 
 
 * **Ample Spacing** : Clean, uncluttered layout designed for long reading sessions.
 * **Bookmarks** : Save articles for later reference, with **Export/Import** support — download your bookmarks as a `.txt` file or restore them from one.
+* **Domain Favicons** : Small site favicons displayed next to each story's domain name for quick visual identification.
 * **Dark Mode** : Carefully tuned for comfort - not just inverted colors.
 * **Collapsible Comments** : Collapse entire threads to reduce noise and focus on what matters.
 * **Keyboard Navigation** : Navigate like a pro - fast, efficient, and distraction-free.
