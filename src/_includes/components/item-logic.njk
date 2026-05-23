@@ -29,7 +29,7 @@
             ${timeAgo(story.time)}
         </span>
         <button class="bookmark-btn flex items-center gap-1 hover:text-accent transition-colors" data-id="${story.id}" style="color: var(--text-secondary);">
-            <span class="material-symbols-outlined !text-[16px] ${isStoryBookmarked ? "text-accent material-symbols-filled" : ""}">
+            <span class="material-symbols-outlined text-[14px] ${isStoryBookmarked ? "text-accent material-symbols-filled" : ""}">
                 bookmark
             </span>
             <span class="text-[10px] sm:text-[11px]">${isStoryBookmarked ? "Bookmarked" : "Bookmark"}</span>
