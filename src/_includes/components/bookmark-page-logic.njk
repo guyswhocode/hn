@@ -89,12 +89,32 @@
 
     loadBookmarks();
 
+    // ── Status Modal ──
+
+    const modal = document.getElementById("status-modal");
+    const modalIcon = document.getElementById("modal-icon");
+    const modalTitle = document.getElementById("modal-title");
+    const modalMessage = document.getElementById("modal-message");
+    const modalClose = document.getElementById("modal-close");
+
+    function showModal(title, icon, message) {
+        modalTitle.textContent = title;
+        modalIcon.textContent = icon;
+        modalMessage.innerHTML = message;
+        modal.classList.remove("hidden");
+    }
+
+    modalClose.addEventListener("click", () => modal.classList.add("hidden"));
+    modal.addEventListener("click", (e) => {
+        if (e.target === modal) modal.classList.add("hidden");
+    });
+
     // ── Export/Import Bookmarks ──
 
     document.getElementById("export-bookmarks").addEventListener("click", () => {
         const bookmarks = getBookmarks();
         if (bookmarks.length === 0) {
-            alert("No bookmarks to export.");
+            showModal("Export", "info", "No bookmarks to export.");
             return;
         }
         const content = bookmarks.join("\n");
@@ -107,6 +127,7 @@
         a.click();
         document.body.removeChild(a);
         URL.revokeObjectURL(url);
+        showModal("Export", "check_circle", `Exported <strong>${bookmarks.length}</strong> bookmark${bookmarks.length !== 1 ? "s" : ""}.`);
     });
 
     const importBtn = document.getElementById("import-bookmarks");
@@ -126,16 +147,24 @@
             .map(Number);
 
         if (ids.length === 0) {
-            alert("No valid bookmark IDs found in the file. Each line should contain a numeric ID.");
+            showModal("Import", "warning", "No valid bookmark IDs found in the file.<br>Each line should contain a numeric ID.");
             fileInput.value = "";
             return;
         }
 
         const existing = getBookmarks();
-        const merged = [...new Set([...existing, ...ids])];
+        const existingSet = new Set(existing);
+        const newIds = ids.filter(id => !existingSet.has(id));
+        const merged = [...existingSet, ...newIds];
         localStorage.setItem("bookmarks", JSON.stringify(merged));
 
         fileInput.value = "";
         loadBookmarks();
+
+        if (newIds.length === 0) {
+            showModal("Import", "bookmark", `All <strong>${ids.length}</strong> ID${ids.length !== 1 ? "s" : ""} were already bookmarked.`);
+        } else {
+            showModal("Import", "check_circle", `Imported <strong>${newIds.length}</strong> new bookmark${newIds.length !== 1 ? "s" : ""}${ids.length !== newIds.length ? ` (${ids.length - newIds.length} already existed)` : ""}.`);
+        }
     });
 </script>
