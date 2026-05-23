@@ -88,4 +88,54 @@
     });
 
     loadBookmarks();
+
+    // ── Export/Import Bookmarks ──
+
+    document.getElementById("export-bookmarks").addEventListener("click", () => {
+        const bookmarks = getBookmarks();
+        if (bookmarks.length === 0) {
+            alert("No bookmarks to export.");
+            return;
+        }
+        const content = bookmarks.join("\n");
+        const blob = new Blob([content], { type: "text/plain" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = "hn-bookmarks.txt";
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+    });
+
+    const importBtn = document.getElementById("import-bookmarks");
+    const fileInput = document.getElementById("import-file-input");
+
+    importBtn.addEventListener("click", () => fileInput.click());
+
+    fileInput.addEventListener("change", async (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        const text = await file.text();
+        const ids = text
+            .split("\n")
+            .map(line => line.trim())
+            .filter(line => /^\d+$/.test(line))
+            .map(Number);
+
+        if (ids.length === 0) {
+            alert("No valid bookmark IDs found in the file. Each line should contain a numeric ID.");
+            fileInput.value = "";
+            return;
+        }
+
+        const existing = getBookmarks();
+        const merged = [...new Set([...existing, ...ids])];
+        localStorage.setItem("bookmarks", JSON.stringify(merged));
+
+        fileInput.value = "";
+        loadBookmarks();
+    });
 </script>
