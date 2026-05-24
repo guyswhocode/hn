@@ -17,7 +17,6 @@
     --accent-decoration: rgba(0, 255, 65, 0.18);
     --accent-bg-btn: rgba(0, 255, 65, 0.10);
     --accent-bg-btn-hover: rgba(0, 255, 65, 0.20);
-    --accent-scanline: rgba(0, 255, 65, 0.015);
     --accent-scrollbar: rgba(0, 255, 65, 0.25);
     --accent-loader-from: rgba(0, 255, 65, 0.06);
     --accent-loader-to: rgba(0, 255, 65, 0.15);
@@ -48,7 +47,6 @@
     --accent-decoration: rgba(0, 107, 31, 0.2);
     --accent-bg-btn: rgba(0, 107, 31, 0.10);
     --accent-bg-btn-hover: rgba(0, 107, 31, 0.20);
-    --accent-scanline: rgba(0, 107, 31, 0.012);
     --accent-scrollbar: rgba(0, 107, 31, 0.2);
     --accent-loader-from: rgba(0, 107, 31, 0.05);
     --accent-loader-to: rgba(0, 107, 31, 0.12);
@@ -124,24 +122,6 @@ html {
     animation: cursor-blink 1s step-end infinite;
     color: var(--accent);
     font-weight: 700;
-}
-
-/* ===== SCAN LINES ===== */
-.scanlines {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    pointer-events: none;
-    z-index: 9999;
-    background: repeating-linear-gradient(
-        0deg,
-        transparent,
-        transparent 2px,
-        var(--accent-scanline) 2px,
-        var(--accent-scanline) 4px
-    );
 }
 
 /* ===== HEADER ===== */
