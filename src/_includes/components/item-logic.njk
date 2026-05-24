@@ -15,7 +15,7 @@
 
         storyDetail.innerHTML = `
     <h1 class="text-2xl sm:text-3xl font-headline font-bold tracking-tight mb-3">
-      <a href="${story.url || "#"}" target="_blank" class="hover:text-accent transition-colors">${story.title}</a>
+      <a href="${story.url || "#"}" target="_blank" class="hover:text-accent transition-colors" data-text="${(story.title || '').replace(/"/g, '&quot;')}">${story.title}</a>
       ${story.url ? `<span class="text-xs text-muted font-normal ml-2">${getDomain(story.url)}</span>` : ""}
     </h1>
     <div class="flex flex-wrap items-center gap-x-4 sm:gap-x-5 gap-y-1.5 text-[0.65rem] sm:text-[0.7rem] text-secondary-muted font-label font-semibold uppercase tracking-wider">
@@ -194,6 +194,11 @@
         }
 
         renderStory(story);
+
+        // Hacker reveal for the story title
+        var storyTitleEl = storyDetail.querySelector('h1 a');
+        if (storyTitleEl) hackerRevealElement(storyTitleEl);
+
         allCommentIds = story.kids || [];
 
         if (allCommentIds.length > 0) {

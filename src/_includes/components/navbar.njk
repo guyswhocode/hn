@@ -11,27 +11,31 @@
             </a>
             <div class="nav-links flex items-center gap-4 sm:gap-6 overflow-x-auto no-scrollbar">
                 <a
-                    class="text-secondary-muted font-bold tracking-tight text-[0.85rem] sm:text-xs hover:text-accent font-headline transition-colors whitespace-nowrap"
+                    class="text-secondary-muted font-bold tracking-tight text-[0.85rem] sm:text-xs hover:text-accent font-headline whitespace-nowrap"
                     href="{{ base }}?type=new"
                     data-type="new"
+                    data-text="new"
                     >new</a
                 >
                 <a
-                    class="text-secondary-muted font-bold tracking-tight text-[0.85rem] sm:text-xs hover:text-accent font-headline transition-colors whitespace-nowrap"
+                    class="text-secondary-muted font-bold tracking-tight text-[0.85rem] sm:text-xs hover:text-accent font-headline whitespace-nowrap"
                     href="{{ base }}?type=ask"
                     data-type="ask"
+                    data-text="ask"
                     >ask</a
                 >
                 <a
-                    class="text-secondary-muted font-bold tracking-tight text-[0.85rem] sm:text-xs hover:text-accent font-headline transition-colors whitespace-nowrap"
+                    class="text-secondary-muted font-bold tracking-tight text-[0.85rem] sm:text-xs hover:text-accent font-headline whitespace-nowrap"
                     href="{{ base }}?type=show"
                     data-type="show"
+                    data-text="show"
                     >show</a
                 >
                 <a
-                    class="text-secondary-muted font-bold tracking-tight text-[0.85rem] sm:text-xs hover:text-accent font-headline transition-colors whitespace-nowrap"
+                    class="text-secondary-muted font-bold tracking-tight text-[0.85rem] sm:text-xs hover:text-accent font-headline whitespace-nowrap"
                     href="{{ base }}?type=jobs"
                     data-type="jobs"
+                    data-text="jobs"
                     >jobs</a
                 >
             </div>
@@ -114,4 +118,65 @@
     }
 
     handleDensityToggle();
+
+    /* ── Hacker flicker animation on nav links ── */
+    function handleNavHackerEffect() {
+        const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()";
+        const links = document.querySelectorAll(".nav-links a[data-text]");
+
+        links.forEach(function (link) {
+            var timer = null;
+
+            link.addEventListener("mouseenter", function () {
+                var self = this;
+                var original = self.getAttribute("data-text");
+                var len = original.length;
+                var frame = 0;
+                var totalFrames = 12;
+
+                if (timer) clearInterval(timer);
+
+                timer = setInterval(function () {
+                    frame++;
+
+                    // Build scrambled string with progressive reveal
+                    var result = "";
+                    var revealCount = Math.min(
+                        Math.floor((frame / totalFrames) * len),
+                        len
+                    );
+
+                    for (var i = 0; i < len; i++) {
+                        if (i < revealCount) {
+                            result += original[i];
+                        } else if (frame < totalFrames - 2) {
+                            result += chars.charAt(
+                                Math.floor(Math.random() * chars.length)
+                            );
+                        } else {
+                            result += original[i];
+                        }
+                    }
+
+                    self.textContent = result;
+
+                    if (frame >= totalFrames) {
+                        clearInterval(timer);
+                        timer = null;
+                        self.textContent = original;
+                    }
+                }, 55);
+            });
+
+            link.addEventListener("mouseleave", function () {
+                if (timer) {
+                    clearInterval(timer);
+                    timer = null;
+                }
+                this.textContent = this.getAttribute("data-text");
+            });
+        });
+    }
+
+    handleNavHackerEffect();
 </script>

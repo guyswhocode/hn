@@ -41,6 +41,49 @@
         return Math.floor(seconds) + " S";
     }
 
+    /* ── Hacker reveal animation on mount ── */
+    function hackerRevealElement(el) {
+        var chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()";
+        var original = el.getAttribute("data-text");
+        if (!original) return;
+        var len = original.length;
+        var frame = 0;
+        var totalFrames = 14;
+        // Stagger so titles don't all flicker in sync
+        var delay = Math.floor(Math.random() * 60);
+
+        setTimeout(function () {
+            var timer = setInterval(function () {
+                frame++;
+
+                var result = "";
+                var revealCount = Math.min(
+                    Math.floor((frame / totalFrames) * len),
+                    len
+                );
+
+                for (var i = 0; i < len; i++) {
+                    if (i < revealCount) {
+                        result += original[i];
+                    } else if (frame < totalFrames - 2) {
+                        result += chars.charAt(
+                            Math.floor(Math.random() * chars.length)
+                        );
+                    } else {
+                        result += original[i];
+                    }
+                }
+
+                el.textContent = result;
+
+                if (frame >= totalFrames) {
+                    clearInterval(timer);
+                    el.textContent = original;
+                }
+            }, 50);
+        }, delay);
+    }
+
     function getDomain(url) {
         if (!url) return "";
         try {

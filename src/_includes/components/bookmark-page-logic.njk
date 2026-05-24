@@ -16,7 +16,8 @@
             <div class="flex-1 min-w-0">
                 <div class="flex flex-wrap items-baseline gap-1.5 mb-1.5">
                     <a class="story-title text-[15px] font-medium leading-snug hover:text-accent transition-colors"
-                    href="../item/index.html?id=${story.id}">
+                    href="../item/index.html?id=${story.id}"
+                    data-text="${story.title.replace(/"/g, '&quot;')}">
                         ${story.title}
                     </a>
                     <span class="text-[10px] text-muted font-label tracking-wide">${getDomain(story.url)}</span>
@@ -64,7 +65,10 @@
         bookmarkContainer.innerHTML = "";
         stories.forEach((story, index) => {
             if (story) {
-                bookmarkContainer.appendChild(createStoryElement(story, index));
+                var el = createStoryElement(story, index);
+                bookmarkContainer.appendChild(el);
+                var titleEl = el.querySelector('.story-title');
+                if (titleEl) hackerRevealElement(titleEl);
             }
         });
     }

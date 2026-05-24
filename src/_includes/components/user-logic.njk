@@ -57,7 +57,7 @@
             el.innerHTML = `
     <div class="flex flex-wrap items-baseline gap-2 mb-1.5">
         <span class="text-[10px] font-bold uppercase tracking-widest text-accent-muted border border-accent px-1.5 rounded">${item.type}</span>
-        <a href="${item.url || `../item/index.html?id=${item.id}`}" class="text-[15px] font-medium hover:text-accent transition-colors">${item.title}</a>
+        <a href="${item.url || `../item/index.html?id=${item.id}`}" class="story-title text-[15px] font-medium hover:text-accent transition-colors" data-text="${(item.title || '').replace(/"/g, '&quot;')}">${item.title}</a>
     </div>
     <div class="flex gap-x-5 text-[10px] text-secondary-muted font-semibold uppercase tracking-wider">
     <span class="flex items-center gap-1">
@@ -108,9 +108,12 @@
 
             items.forEach((item) => {
                 if (item && !item.deleted && !item.dead) {
-                    submissionsContainer.appendChild(
-                        createSubmissionElement(item),
-                    );
+                    var el = createSubmissionElement(item);
+                    submissionsContainer.appendChild(el);
+                    if (item.type === "story" || item.type === "poll") {
+                        var titleEl = el.querySelector('.story-title');
+                        if (titleEl) hackerRevealElement(titleEl);
+                    }
                 }
             });
 

@@ -37,7 +37,8 @@
     <div class="flex-1 min-w-0">
         <div class="flex flex-wrap items-baseline gap-1.5 mb-1.5">
             <a class="story-title text-[15px] font-medium leading-snug hover:text-accent transition-colors"
-            href="${story.url || `item/index.html?id=${story.id}`}" ${story.url ? 'target="_blank"' : ""}>
+            href="${story.url || `item/index.html?id=${story.id}`}" ${story.url ? 'target="_blank"' : ""}
+            data-text="${story.title.replace(/"/g, '&quot;')}">
                 ${story.title}
             </a>
             <span class="text-[10px] text-muted font-label tracking-wide">${getDomain(story.url)}</span>
@@ -128,10 +129,19 @@
         const loader = document.getElementById("feed-loader");
         if (loader && !append) feedContainer.innerHTML = "";
 
+        var hackableTitles = [];
         stories.forEach((story, index) => {
             if (story) {
-                feedContainer.appendChild(createStoryElement(story, index));
+                var el = createStoryElement(story, index);
+                feedContainer.appendChild(el);
+                var titleEl = el.querySelector('.story-title');
+                if (titleEl) hackableTitles.push(titleEl);
             }
+        });
+
+        // Kick off hacker reveal animation for each new title
+        hackableTitles.forEach(function (titleEl) {
+            hackerRevealElement(titleEl);
         });
 
         currentPage++;
