@@ -92,7 +92,7 @@
     function updateSearchInfo(query, count) {
         searchInfo.classList.remove("hidden");
         searchQueryLabel.textContent = `Results for "${query}" — `;
-        searchResultCount.textContent = `${count} ${count === 1 ? "story" : "stories"}`;
+        searchResultCount.textContent = `${count} item${count === 1 ? '' : 's'}`;
     }
 
     async function performSearch(query, append = false) {
