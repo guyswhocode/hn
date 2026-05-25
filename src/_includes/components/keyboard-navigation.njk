@@ -70,6 +70,13 @@
                 >
                 <kbd>B</kbd>
             </div>
+            <div class="flex justify-between items-center">
+                <span
+                    class="text-[10px] sm:text-xs font-semibold text-secondary-muted uppercase tracking-widest"
+                    >Search</span
+                >
+                <kbd>/</kbd>
+            </div>
         </div>
     </div>
 </div>
@@ -179,6 +186,17 @@
                 break;
             case "?":
                 if (shortcutsModal) shortcutsModal.classList.toggle("hidden");
+                break;
+            case "/":
+                if (!shortcutsModal || shortcutsModal.classList.contains("hidden")) {
+                    const searchModal = document.getElementById("search-modal");
+                    const searchInput = document.getElementById("search-input");
+                    if (searchModal && searchModal.classList.contains("hidden")) {
+                        e.preventDefault();
+                        searchModal.classList.remove("hidden");
+                        setTimeout(() => searchInput?.focus(), 100);
+                    }
+                }
                 break;
             case "escape":
                 if (shortcutsModal) shortcutsModal.classList.add("hidden");

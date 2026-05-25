@@ -1,0 +1,90 @@
+---
+layout: layouts/base.njk
+permalink: /search.html
+---
+
+<main class="pt-16 pb-6 px-4 sm:px-6 max-w-4xl mx-auto min-h-screen">
+    <!-- Search Header -->
+    <header class="pt-2 sm:pt-4 mb-6 sm:mb-8">
+        <h1 class="text-lg sm:text-xl font-headline font-bold uppercase tracking-widest text-accent">Search</h1>
+        <div class="mt-4">
+            <form id="search-page-form">
+                <div class="flex items-center gap-2">
+                    <input
+                        id="search-page-input"
+                        type="text"
+                        placeholder="Search stories..."
+                        class="flex-1 bg-transparent border px-3 py-2.5 text-sm font-body outline-none transition-colors"
+                        style="border: 1px solid var(--accent-border); color: var(--text-primary);"
+                        autocomplete="off"
+                    />
+                    <button
+                        type="submit"
+                        class="btn-accent font-headline font-bold uppercase tracking-widest text-[9px] sm:text-[11px] px-4 py-2.5 inline-flex items-center gap-1.5"
+                    >
+                        <span class="material-symbols-outlined !text-[14px]">search</span>
+                        Search
+                    </button>
+                </div>
+                <div class="flex flex-wrap items-center gap-x-4 gap-y-1.5 mt-3">
+                    <label class="flex items-center gap-1.5 cursor-pointer text-secondary-muted hover:text-accent transition-colors text-[10px] font-label font-semibold uppercase tracking-wider">
+                        <input type="checkbox" name="tag" value="story" checked
+                            class="w-3 h-3 rounded cursor-pointer accent-[var(--accent)]" />
+                        Story
+                    </label>
+                    <label class="flex items-center gap-1.5 cursor-pointer text-secondary-muted hover:text-accent transition-colors text-[10px] font-label font-semibold uppercase tracking-wider">
+                        <input type="checkbox" name="tag" value="comment"
+                            class="w-3 h-3 rounded cursor-pointer accent-[var(--accent)]" />
+                        Comment
+                    </label>
+                    <label class="flex items-center gap-1.5 cursor-pointer text-secondary-muted hover:text-accent transition-colors text-[10px] font-label font-semibold uppercase tracking-wider">
+                        <input type="checkbox" name="tag" value="show_hn"
+                            class="w-3 h-3 rounded cursor-pointer accent-[var(--accent)]" />
+                        Show HN
+                    </label>
+                    <label class="flex items-center gap-1.5 cursor-pointer text-secondary-muted hover:text-accent transition-colors text-[10px] font-label font-semibold uppercase tracking-wider">
+                        <input type="checkbox" name="tag" value="ask_hn"
+                            class="w-3 h-3 rounded cursor-pointer accent-[var(--accent)]" />
+                        Ask HN
+                    </label>
+                </div>
+            </form>
+        </div>
+    </header>
+
+    <!-- Search Results Info -->
+    <div id="search-info" class="hidden mb-6 text-[0.65rem] sm:text-[0.7rem] text-secondary-muted font-label font-semibold uppercase tracking-wider">
+        <span id="search-query-label"></span>
+        <span id="search-result-count" class="text-accent"></span>
+    </div>
+
+    <!-- Search Results -->
+    <div id="search-results" class="divide-default">
+        <!-- Empty state -->
+        <div id="search-empty" class="hidden py-10 text-center text-secondary-muted">No stories found. Try a different query.</div>
+        <!-- Initial hint -->
+        <div id="search-hint" class="py-10 text-center text-secondary-muted text-xs">Enter a query above to search Hacker News stories.</div>
+        <!-- Loader -->
+        <div id="search-loader" class="hidden space-y-5 pt-4">
+            <div class="animate-pulse flex items-start px-2 py-5">
+                <div class="w-8 h-8 skeleton-block rounded mr-4"></div>
+                <div class="flex-1 space-y-3">
+                    <div class="h-4 skeleton-block rounded w-3/4"></div>
+                    <div class="h-3 skeleton-block rounded w-1/2"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Load More -->
+    <div class="mt-10 sm:mt-12 text-center">
+        <button
+            id="search-load-more"
+            class="hidden inline-flex items-center justify-center px-5 sm:px-6 py-2.5 sm:py-3 btn-accent font-headline font-bold uppercase tracking-widest text-[9px] sm:text-[11px]"
+        >
+            Show More
+        </button>
+    </div>
+</main>
+
+{% include "components/search-logic.njk" %}

@@ -1,0 +1,263 @@
+<script>
+    const searchResults = document.getElementById("search-results");
+    const searchInfo = document.getElementById("search-info");
+    const searchQueryLabel = document.getElementById("search-query-label");
+    const searchResultCount = document.getElementById("search-result-count");
+    const searchEmpty = document.getElementById("search-empty");
+    const searchHint = document.getElementById("search-hint");
+    const searchLoader = document.getElementById("search-loader");
+    const searchLoadMore = document.getElementById("search-load-more");
+    const searchPageForm = document.getElementById("search-page-form");
+    const searchPageInput = document.getElementById("search-page-input");
+
+    let currentQuery = "";
+    let currentTags = [];
+    let currentPage = 0;
+    let totalHits = 0;
+    let totalPages = 0;
+    let currentHits = [];
+
+    function createSearchStoryElement(story, index) {
+        const absoluteIndex = currentPage * SEARCH_HITS_PER_PAGE + index + 1;
+        const formattedIndex = absoluteIndex < 10 ? `0${absoluteIndex}` : absoluteIndex;
+        const isStoryBookmarked = isBookmarked(story.id);
+
+        const article = document.createElement("article");
+        article.className = "group relative flex items-start py-5 sm:py-6 px-2 rounded transition-colors";
+
+        article.innerHTML = `
+            <div class="flex flex-col items-center w-8 mr-4 pt-1 story-index flex-shrink-0">
+                <span class="text-base font-headline font-bold text-accent transition-colors">${formattedIndex}</span>
+            </div>
+            <div class="flex-1 min-w-0">
+                <div class="flex flex-wrap items-baseline gap-1.5 mb-1.5">
+                    <a class="story-title text-[15px] font-medium leading-snug hover:text-accent transition-colors"
+                    href="${story.url ? story.url : `./item/index.html?id=${story.id}`}" ${story.url ? 'target="_blank"' : ""}
+                    data-text="${story.title.replace(/"/g, '&quot;')}">
+                        ${story.title}
+                    </a>
+                    <span class="text-[10px] text-muted font-label tracking-wide">${getDomain(story.url)}</span>
+                </div>
+                <div class="story-meta flex flex-wrap items-center gap-x-5 gap-y-1 text-[0.65rem] text-secondary-muted font-label font-semibold tracking-wider">
+                    <span class="flex items-center gap-1">
+                    <span class="material-symbols-outlined !text-[12px]">change_history</span>
+                    ${story.score || 0}</span>
+                    <span class="flex items-center gap-1">
+                        <span class="material-symbols-outlined !text-[12px]">person</span>
+                        <a class="hover:text-accent transition-colors underline decoration-accent underline-offset-2"
+                        href="./user/index.html?id=${story.by}">${story.by}</a>
+                    </span>
+                    <span class="flex items-center gap-1">
+                        <span class="material-symbols-outlined !text-[12px]">schedule</span>
+                        ${timeAgo(story.time)}
+                    </span>
+                    <a class="flex items-center gap-1 hover:text-accent transition-colors"
+                    href="./item/index.html?id=${story.id}">
+                        <span class="material-symbols-outlined !text-[12px]">chat</span>
+                        ${story.descendants || 0}
+                    </a>
+                    <button class="bookmark-btn cursor-pointer flex items-center gap-1 hover:text-accent transition-colors" data-id="${story.id}">
+                        <span class="material-symbols-outlined !text-[14px] ${isStoryBookmarked ? "text-accent material-symbols-filled" : ""}">
+                            bookmark
+                        </span>
+                    </button>
+                </div>
+            </div>
+        `;
+        return article;
+    }
+
+    function showLoader() {
+        searchHint.classList.add("hidden");
+        searchEmpty.classList.add("hidden");
+        searchLoader.classList.remove("hidden");
+        const items = searchLoader.querySelectorAll(".animate-pulse");
+        if (items.length === 0) {
+            const placeholder = `<div class="animate-pulse flex items-start px-2 py-5 sm:py-6">
+                <div class="w-8 h-8 skeleton-block rounded mr-4"></div>
+                <div class="flex-1 space-y-3">
+                    <div class="h-4 skeleton-block rounded w-4/5"></div>
+                    <div class="h-3 skeleton-block rounded w-1/4"></div>
+                </div>
+            </div>`;
+            searchLoader.innerHTML = placeholder.repeat(5);
+        }
+    }
+
+    function hideLoader() {
+        searchLoader.classList.add("hidden");
+        searchLoader.innerHTML = "";
+    }
+
+    function updateSearchInfo(query, count) {
+        searchInfo.classList.remove("hidden");
+        searchQueryLabel.textContent = `Results for "${query}" — `;
+        searchResultCount.textContent = `${count} ${count === 1 ? "story" : "stories"}`;
+    }
+
+    async function performSearch(query, append = false) {
+        if (!query.trim()) return;
+
+        if (!append) {
+            currentQuery = query;
+            currentPage = 0;
+            currentHits = [];
+            showLoader();
+            searchInfo.classList.add("hidden");
+            searchLoadMore.classList.add("hidden");
+            // Remove existing results except loader/hint/empty
+            const items = searchResults.querySelectorAll("article");
+            items.forEach(el => el.remove());
+        } else {
+            searchLoadMore.disabled = true;
+            searchLoadMore.innerHTML = `<span class="flex items-center gap-1.5">
+                <span class="material-symbols-outlined animate-spin !text-[11px]">progress_activity</span>
+                Loading
+            </span>`;
+        }
+
+        try {
+            const result = await searchAlgolia(query, currentPage, currentTags);
+
+            hideLoader();
+
+            if (result.hits.length === 0 && !append) {
+                searchEmpty.classList.remove("hidden");
+                searchHint.classList.add("hidden");
+                return;
+            }
+
+            searchEmpty.classList.add("hidden");
+            searchHint.classList.add("hidden");
+
+            if (!append) {
+                updateSearchInfo(query, result.nbHits);
+            }
+
+            totalHits = result.nbHits;
+            totalPages = result.nbPages;
+
+            var hackableTitles = [];
+            result.hits.forEach((story, index) => {
+                if (story) {
+                    var el = createSearchStoryElement(story, index);
+                    searchResults.appendChild(el);
+                    var titleEl = el.querySelector('.story-title');
+                    if (titleEl) hackableTitles.push(titleEl);
+                }
+            });
+
+            currentHits = currentHits.concat(result.hits);
+            currentPage++;
+
+            // Hacker reveal animation
+            hackableTitles.forEach(function (titleEl) {
+                hackerRevealElement(titleEl);
+            });
+
+            // Update load more
+            if (currentPage >= totalPages) {
+                searchLoadMore.classList.add("hidden");
+            } else {
+                searchLoadMore.classList.remove("hidden");
+                searchLoadMore.disabled = false;
+                searchLoadMore.innerHTML = "Show More";
+            }
+        } catch (error) {
+            console.error("Search error:", error);
+            hideLoader();
+            searchResults.innerHTML = '<div class="py-10 text-center text-secondary-muted">Search failed. Please try again.</div>';
+            searchLoadMore.classList.add("hidden");
+        }
+    }
+
+    // Click handler for bookmark buttons (delegated)
+    searchResults.addEventListener("click", (e) => {
+        const bookmarkBtn = e.target.closest(".bookmark-btn");
+        if (bookmarkBtn) {
+            const id = parseInt(bookmarkBtn.dataset.id);
+            const added = toggleBookmark(id);
+            const icon = bookmarkBtn.querySelector(".material-symbols-outlined");
+            if (added) {
+                icon.classList.add("material-symbols-filled", "text-accent");
+            } else {
+                icon.classList.remove("material-symbols-filled", "text-accent");
+            }
+        }
+    });
+
+    function getSelectedTags() {
+        var checkboxes = searchPageForm.querySelectorAll('input[name="tag"]:checked');
+        var tags = [];
+        checkboxes.forEach(function (cb) { tags.push(cb.value); });
+        return tags;
+    }
+
+    function setTagsFromUrl(tagsStr) {
+        if (!tagsStr) return;
+        var selected = tagsStr.split(',').map(function (t) { return t.trim(); });
+        var checkboxes = searchPageForm.querySelectorAll('input[name="tag"]');
+        checkboxes.forEach(function (cb) {
+            cb.checked = selected.indexOf(cb.value) !== -1;
+        });
+    }
+
+    // Form submit
+    if (searchPageForm) {
+        searchPageForm.addEventListener("submit", (e) => {
+            e.preventDefault();
+            const q = searchPageInput.value.trim();
+            if (q) {
+                currentTags = getSelectedTags();
+                var newUrl = window.location.pathname + "?q=" + encodeURIComponent(q);
+                if (currentTags.length > 0) newUrl += "&tags=" + currentTags.join(',');
+                window.history.pushState({ q: q, tags: currentTags }, "", newUrl);
+                performSearch(q);
+            }
+        });
+    }
+
+    // Load more
+    if (searchLoadMore) {
+        searchLoadMore.addEventListener("click", () => {
+            performSearch(currentQuery, true);
+        });
+    }
+
+    // Handle back/forward navigation
+    window.addEventListener("popstate", () => {
+        const params = new URLSearchParams(window.location.search);
+        const q = params.get("q");
+        if (q) {
+            searchPageInput.value = q;
+            currentTags = [];
+            // Reset and re-search
+            currentPage = 0;
+            currentHits = [];
+            const items = searchResults.querySelectorAll("article");
+            items.forEach(el => el.remove());
+            searchInfo.classList.add("hidden");
+            searchLoadMore.classList.add("hidden");
+            const tagsStr = params.get("tags");
+            setTagsFromUrl(tagsStr);
+            currentTags = getSelectedTags();
+            performSearch(q);
+        }
+    });
+
+    // Init from URL
+    function initSearch() {
+        const params = new URLSearchParams(window.location.search);
+        const q = params.get("q");
+        if (q) {
+            searchPageInput.value = q;
+            currentQuery = q;
+            var tagsStr = params.get("tags");
+            setTagsFromUrl(tagsStr);
+            currentTags = getSelectedTags();
+            performSearch(q);
+        }
+    }
+
+    initSearch();
+</script>

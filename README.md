@@ -6,6 +6,7 @@ A clean, distraction-free viewer for Hacker News focused on readability, speed, 
 
 * **Ample Spacing** : Clean, uncluttered layout designed for long reading sessions.
 * **Bookmarks** : Save articles for later reference, with **Export/Import** support — download your bookmarks as a `.txt` file or restore them from one.
+* **Search** : Full-text search across Hacker News content powered by Algolia, with tag filters (Story, Comment, Show HN, Ask HN), pagination, and instant results.
 * **Domain Favicons** : Small site favicons displayed next to each story's domain name for quick visual identification.
 * **Dark Mode** : Carefully tuned for comfort - not just inverted colors.
 * **Collapsible Comments** : Collapse entire threads to reduce noise and focus on what matters.

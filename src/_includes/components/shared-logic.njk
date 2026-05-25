@@ -84,6 +84,44 @@
         }, delay);
     }
 
+    /* ── Algolia Search API ── */
+    const ALGOLIA_API_URL = "https://hn.algolia.com/api/v1/search_by_date";
+    const SEARCH_HITS_PER_PAGE = 20;
+
+    function parseAlgoliaStory(hit) {
+        return {
+            id: parseInt(hit.objectID),
+            title: hit.title || "Untitled",
+            url: hit.url || null,
+            by: hit.author || "anonymous",
+            score: hit.points || 0,
+            time: hit.created_at_i,
+            descendants: hit.num_comments || 0,
+            text: hit.story_text || hit.comment_text || null,
+        };
+    }
+
+    async function searchAlgolia(query, page = 0, tags) {
+        var tagParams = 'tags=story';
+        if (tags && tags.length > 0) {
+            if (tags.length === 1) {
+                tagParams = 'tags=' + encodeURIComponent(tags[0]);
+            } else {
+                tagParams = tags.map(function (t) { return 'tags=' + encodeURIComponent(t); }).join('&');
+            }
+        }
+        const url = `${ALGOLIA_API_URL}?query=${encodeURIComponent(query)}&${tagParams}&page=${page}&hitsPerPage=${SEARCH_HITS_PER_PAGE}`;
+        const response = await fetch(url);
+        const data = await response.json();
+        return {
+            hits: (data.hits || []).map(parseAlgoliaStory),
+            nbHits: data.nbHits || 0,
+            page: data.page || 0,
+            nbPages: data.nbPages || 0,
+            hitsPerPage: data.hitsPerPage || SEARCH_HITS_PER_PAGE,
+        };
+    }
+
     function getDomain(url) {
         if (!url) return "";
         try {

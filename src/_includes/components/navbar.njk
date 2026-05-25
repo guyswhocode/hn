@@ -56,6 +56,13 @@
                 bookmark
             </a>
             <button
+                id="search-btn"
+                class="material-symbols-outlined cursor-pointer text-secondary-muted hover:text-accent transition-colors !text-[14px] sm:!text-lg"
+                title="Search"
+            >
+                search
+            </button>
+            <button
                 id="theme-toggle"
                 class="material-symbols-outlined cursor-pointer text-secondary-muted hover:text-accent transition-colors !text-[14px] sm:!text-lg"
             >
@@ -64,6 +71,76 @@
         </div>
     </div>
 </nav>
+
+<!-- Search Modal -->
+<div
+    id="search-modal"
+    class="hidden fixed inset-0 z-[100] flex items-start justify-center pt-[15vh] px-4 sm:px-6"
+    style="background-color: rgba(0,0,0,0.6); backdrop-filter: blur(4px);"
+>
+    <div
+        class="bg-surface w-full max-w-md rounded border p-5 sm:p-6"
+        style="border: 1px solid var(--accent-border);"
+    >
+        <div class="flex justify-between items-center mb-4">
+            <h3
+                class="text-sm sm:text-base font-headline font-bold uppercase tracking-widest text-accent"
+            >
+                Search HN
+            </h3>
+            <button
+                id="search-close"
+                class="material-symbols-outlined cursor-pointer text-secondary-muted hover:text-accent transition-colors !text-lg"
+            >
+                close
+            </button>
+        </div>
+        <form id="search-form">
+            <div class="flex items-center gap-2">
+                <input
+                    id="search-input"
+                    type="text"
+                    placeholder="Search stories..."
+                    class="flex-1 bg-transparent border px-3 py-2 text-sm font-body outline-none transition-colors"
+                    style="border: 1px solid var(--accent-border); color: var(--text-primary);"
+                    autocomplete="off"
+                />
+                <button
+                    type="submit"
+                    class="material-symbols-outlined cursor-pointer text-accent hover:opacity-80 transition-opacity !text-lg"
+                >
+                    arrow_forward
+                </button>
+            </div>
+            <div class="flex flex-wrap items-center gap-x-4 gap-y-1.5 mt-3">
+                <label class="flex items-center gap-1.5 cursor-pointer text-secondary-muted hover:text-accent transition-colors text-[10px] font-label font-semibold uppercase tracking-wider">
+                    <input type="checkbox" name="tag" value="story" checked
+                        class="w-3 h-3 rounded cursor-pointer accent-[var(--accent)]" />
+                    Story
+                </label>
+                <label class="flex items-center gap-1.5 cursor-pointer text-secondary-muted hover:text-accent transition-colors text-[10px] font-label font-semibold uppercase tracking-wider">
+                    <input type="checkbox" name="tag" value="comment"
+                        class="w-3 h-3 rounded cursor-pointer accent-[var(--accent)]" />
+                    Comment
+                </label>
+                <label class="flex items-center gap-1.5 cursor-pointer text-secondary-muted hover:text-accent transition-colors text-[10px] font-label font-semibold uppercase tracking-wider">
+                    <input type="checkbox" name="tag" value="show_hn"
+                        class="w-3 h-3 rounded cursor-pointer accent-[var(--accent)]" />
+                    Show HN
+                </label>
+                <label class="flex items-center gap-1.5 cursor-pointer text-secondary-muted hover:text-accent transition-colors text-[10px] font-label font-semibold uppercase tracking-wider">
+                    <input type="checkbox" name="tag" value="ask_hn"
+                        class="w-3 h-3 rounded cursor-pointer accent-[var(--accent)]" />
+                    Ask HN
+                </label>
+            </div>
+        </form>
+        <p class="mt-3 text-[10px] text-secondary-muted font-label">
+            Press <kbd>Esc</kbd> to close &middot; <kbd>/</kbd> to open
+        </p>
+    </div>
+</div>
+
 <style>
 /* Hide scrollbar for nav links on mobile */
 .no-scrollbar::-webkit-scrollbar { display: none; }
@@ -179,4 +256,56 @@
     }
 
     handleNavHackerEffect();
+
+    /* ── Search ── */
+    const searchBtn = document.getElementById("search-btn");
+    const searchModal = document.getElementById("search-modal");
+    const searchClose = document.getElementById("search-close");
+    const searchInput = document.getElementById("search-input");
+    const searchForm = document.getElementById("search-form");
+
+    if (searchBtn && searchModal) {
+        searchBtn.addEventListener("click", () => {
+            searchModal.classList.remove("hidden");
+            setTimeout(() => searchInput?.focus(), 100);
+        });
+
+        if (searchClose) {
+            searchClose.addEventListener("click", () => {
+                searchModal.classList.add("hidden");
+            });
+        }
+
+        searchModal.addEventListener("click", (e) => {
+            if (e.target === searchModal) {
+                searchModal.classList.add("hidden");
+            }
+        });
+
+        document.addEventListener("keydown", (e) => {
+            if (e.key === "Escape" && !searchModal.classList.contains("hidden")) {
+                searchModal.classList.add("hidden");
+            }
+        });
+
+        if (searchForm) {
+            searchForm.addEventListener("submit", (e) => {
+                e.preventDefault();
+                const query = searchInput.value.trim();
+                if (query) {
+                    // Collect selected tags
+                    var tagCheckboxes = searchForm.querySelectorAll('input[name="tag"]:checked');
+                    var tags = [];
+                    tagCheckboxes.forEach(function (cb) { tags.push(cb.value); });
+                    // Compute relative path to search page from current URL depth
+                    var pathParts = window.location.pathname.split('/').filter(Boolean);
+                    var depth = Math.max(0, pathParts.length - 1);
+                    var prefix = depth === 0 ? './' : '../'.repeat(depth);
+                    var url = prefix + 'search.html?q=' + encodeURIComponent(query);
+                    if (tags.length > 0) url += '&tags=' + tags.join(',');
+                    window.location.href = url;
+                }
+            });
+        }
+    }
 </script>
