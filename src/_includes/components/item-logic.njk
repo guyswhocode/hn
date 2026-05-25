@@ -63,6 +63,7 @@
         if (!comment || comment.deleted || comment.dead) return null;
 
         const commentEl = document.createElement("div");
+        commentEl.id = `comment-${commentId}`;
         commentEl.className = `comment-item ${depth > 0 ? "ml-3 sm:ml-8 border-l border-default pl-3 sm:pl-6" : ""}`;
 
         commentEl.innerHTML = `
@@ -148,6 +149,27 @@
             console.error("Error loading comments:", error);
         } finally {
             updateLoadMoreButton();
+            scrollToHighlightedComment();
+        }
+    }
+
+    function scrollToHighlightedComment() {
+        var urlParams = new URLSearchParams(window.location.search);
+        var highlightId = urlParams.get("highlight");
+        if (!highlightId) return;
+
+        var commentEl = document.getElementById("comment-" + highlightId);
+        if (!commentEl) return;
+
+        commentEl.scrollIntoView({ behavior: "smooth", block: "center" });
+        commentEl.classList.add("highlighted-comment");
+        // Expand it in case it was collapsed
+        var body = commentEl.querySelector(".comment-body");
+        var toggle = commentEl.querySelector(".collapse-toggle .material-symbols-outlined");
+        if (body && toggle && body.classList.contains("hidden")) {
+            body.classList.remove("hidden");
+            toggle.textContent = "remove";
+            commentEl.classList.remove("opacity-60");
         }
     }
 
@@ -203,11 +225,13 @@
 
         if (allCommentIds.length > 0) {
             await loadNextComments();
+            scrollToHighlightedComment();
         } else {
             const loader = document.getElementById("comments-loader");
             if (loader) loader.remove();
             commentsContainer.innerHTML =
                 '<div class="text-secondary-muted text-xs italic">No comments yet.</div>';
+            scrollToHighlightedComment();
         }
     }
 

@@ -88,16 +88,33 @@
     const ALGOLIA_API_URL = "https://hn.algolia.com/api/v1/search_by_date";
     const SEARCH_HITS_PER_PAGE = 20;
 
+    function stripHtml(html) {
+        var div = document.createElement('div');
+        div.innerHTML = html;
+        return div.textContent || div.innerText || '';
+    }
+
     function parseAlgoliaStory(hit) {
+        var isComment = !hit.title && hit.comment_text;
+        var title = hit.title;
+        if (!title) {
+            if (isComment) {
+                title = stripHtml(hit.comment_text);
+                if (title.length > 250) title = title.substring(0, 250) + '…';
+            } else {
+                title = hit.story_title || 'Untitled';
+            }
+        }
         return {
-            id: parseInt(hit.objectID),
-            title: hit.title || "Untitled",
-            url: hit.url || null,
-            by: hit.author || "anonymous",
+            id: isComment ? parseInt(hit.story_id || hit.objectID) : parseInt(hit.objectID),
+            title: title,
+            url: null,
+            by: hit.author || 'anonymous',
             score: hit.points || 0,
             time: hit.created_at_i,
             descendants: hit.num_comments || 0,
             text: hit.story_text || hit.comment_text || null,
+            highlight: isComment ? hit.objectID : null,
         };
     }
 

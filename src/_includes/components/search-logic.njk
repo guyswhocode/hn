@@ -32,11 +32,12 @@
             <div class="flex-1 min-w-0">
                 <div class="flex flex-wrap items-baseline gap-1.5 mb-1.5">
                     <a class="story-title text-[15px] font-medium leading-snug hover:text-accent transition-colors"
-                    href="${story.url ? story.url : `./item/index.html?id=${story.id}`}" ${story.url ? 'target="_blank"' : ""}
+                    href="./item/index.html?id=${story.id}${story.highlight ? '&highlight=' + story.highlight : ''}"
+                    ${story.url ? 'target="_blank"' : ""}
                     data-text="${story.title.replace(/"/g, '&quot;')}">
                         ${story.title}
                     </a>
-                    <span class="text-[10px] text-muted font-label tracking-wide">${getDomain(story.url)}</span>
+                    <span class="text-[10px] text-muted font-label tracking-wide">${story.highlight ? 'comment' : getDomain(story.url)}</span>
                 </div>
                 <div class="story-meta flex flex-wrap items-center gap-x-5 gap-y-1 text-[0.65rem] text-secondary-muted font-label font-semibold tracking-wider">
                     <span class="flex items-center gap-1">
@@ -199,6 +200,24 @@
         var checkboxes = searchPageForm.querySelectorAll('input[name="tag"]');
         checkboxes.forEach(function (cb) {
             cb.checked = selected.indexOf(cb.value) !== -1;
+        });
+    }
+
+    // Mutual exclusion: comment vs story/show_hn/ask_hn
+    if (searchPageForm) {
+        var searchTagCheckboxes = searchPageForm.querySelectorAll('input[name="tag"]');
+        searchTagCheckboxes.forEach(function (cb) {
+            cb.addEventListener("change", function () {
+                if (this.value === "comment" && this.checked) {
+                    searchTagCheckboxes.forEach(function (other) {
+                        if (other.value !== "comment") other.checked = false;
+                    });
+                } else if (this.value !== "comment" && this.checked) {
+                    searchTagCheckboxes.forEach(function (other) {
+                        if (other.value === "comment") other.checked = false;
+                    });
+                }
+            });
         });
     }
 
