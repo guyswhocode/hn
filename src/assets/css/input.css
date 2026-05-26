@@ -111,17 +111,25 @@ html {
     background: color-mix(in srgb, var(--accent-scrollbar) 80%, transparent);
 }
 
-/* ===== TERMINAL CURSOR ===== */
-@keyframes cursor-blink {
-    0%, 100% { opacity: 1; }
+/* ===== TERMINAL CURSOR UNDERSCORE ===== */
+@keyframes cursor-blink-5 {
+    0% { opacity: 1; }
+    10% { opacity: 0; }
+    20% { opacity: 1; }
+    30% { opacity: 0; }
+    40% { opacity: 1; }
     50% { opacity: 0; }
+    60% { opacity: 1; }
+    70% { opacity: 0; }
+    80% { opacity: 1; }
+    90% { opacity: 0; }
+    100% { opacity: 0; }
 }
 
-.terminal-cursor::after {
-    content: "_";
-    animation: cursor-blink 1s step-end infinite;
+.cursor-underscore {
     color: var(--accent);
     font-weight: 700;
+    animation: cursor-blink-5 5s step-end forwards;
 }
 
 /* ===== HEADER ===== */
