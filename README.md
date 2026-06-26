@@ -1,5 +1,13 @@
 # Hacker News Reader
 
+<p align="center">
+  <img src="docs/hn-screenshot-desktop.jpg" alt="Hacker News Reader - Desktop view" width="800">
+</p>
+
+<p align="center">
+  <img src="docs/hn-screenshot-mobile.jpg" alt="Hacker News Reader - Mobile view" height="500">
+</p>
+
 A clean, distraction-free viewer for Hacker News focused on readability, speed, and keyboard-first navigation. This is a read-only experience - no login, no submissions, no noise. Just better consumption.
 
 ## Features
