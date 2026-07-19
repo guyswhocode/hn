@@ -1,0 +1,41 @@
+# HN - Hacker News Reader
+
+> A clean, distraction-free viewer for Hacker News focused on readability, speed, and keyboard-first navigation. This is a read-only experience — no login, no submissions, no noise. Just better consumption.
+
+## About
+
+HN is a minimal web client for browsing Hacker News content. It is an independent project and is not affiliated with Hacker News or Y Combinator.
+
+- **Repository**: https://github.com/guyswhocode/HN
+- **Live Site**: https://guyswhocode.com/hn
+
+## Features
+
+- Ample spacing for comfortable reading
+- Bookmarks with Export/Import support (.txt)
+- Full-text search via Algolia with tag filters (Story, Comment, Show HN, Ask HN)
+- Domain favicons for quick visual identification
+- Dark mode
+- Collapsible comment threads
+- Keyboard navigation
+- Density toggle (compact vs comfortable)
+
+## Pages
+
+- **/** — Main feed: browse the latest Hacker News stories with infinite scroll and a "Show More" button.
+- **/search.html** — Search page: full-text search across HN content with tag filters and pagination.
+- **/bookmark/** — Bookmarks page: view, export, and import saved articles.
+- **/item/** — Story detail page (client-side): view a specific HN story and its comments. Requires an `id` query parameter.
+- **/user/** — User page (client-side): view a specific HN user's profile and submissions. Requires an `id` query parameter.
+
+## Tech Stack
+
+- **Static Site Generator**: Eleventy (11ty)
+- **Styling**: Tailwind CSS
+- **Data Source**: Algolia HN Search API
+- **Hosting**: GitHub Pages
+- **Language**: JavaScript (vanilla, no frameworks)
+
+## Keyboard Shortcuts
+
+The site supports keyboard navigation for browsing stories efficiently. Refer to the in-app keyboard guide for the full list of shortcuts.
