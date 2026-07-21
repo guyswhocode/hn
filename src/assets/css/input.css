@@ -307,6 +307,9 @@ kbd {
         font-size: 0.8125rem !important;
         min-width: 1.5rem !important;
     }
+    #help-btn {
+        display: none !important;
+    }
 }
 
 /* ===== ACCENT BUTTON (filled, terminal-style) ===== */
