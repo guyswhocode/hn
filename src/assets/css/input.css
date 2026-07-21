@@ -132,13 +132,6 @@ html {
     animation: cursor-blink-5 5s step-end forwards;
 }
 
-/* ===== HEADER ===== */
-.glass-header {
-    background-color: var(--bg-header);
-    backdrop-filter: blur(20px);
-    border-bottom: 1px solid var(--accent-border);
-}
-
 /* ===== LOADING SKELETON ===== */
 .loading-skeleton {
     background: linear-gradient(90deg, var(--accent-loader-from) 25%, var(--accent-loader-to) 50%, var(--accent-loader-from) 75%);
