@@ -46,8 +46,6 @@
         style="background-color: var(--bg-primary); color: var(--text-primary);"
     >
         {% include "components/navbar.njk" %}
-        <!-- Terminal status bar -->
-        <div class="fixed top-0 left-0 w-full h-[1px] z-[60]" style="background-color: var(--accent-border);"></div>
         {% include "components/shared-logic.njk" %}
         {{ content | safe }}
         {% include "components/footer.njk" %}

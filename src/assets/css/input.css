@@ -206,6 +206,10 @@ html {
     border-bottom-width: 0;
 }
 
+.divide-default > :first-child {
+    border-top: none;
+}
+
 /* ===== KEYBOARD SHORTCUT KBD ===== */
 kbd {
     font-family: inherit;
